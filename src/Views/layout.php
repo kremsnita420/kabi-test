@@ -15,7 +15,7 @@ $viteDev = file_exists(__DIR__ . '/../../.vite-dev');
     <meta charset="UTF-8">
     <title>Products</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <link rel="stylesheet" href="/assets/fontawesome/css/all.min.css">
     <?php if ($viteDev): ?>
         <script type="module" src="http://localhost:5173/@vite/client"></script>
         <script type="module" src="http://localhost:5173/resources/js/app.js"></script>
