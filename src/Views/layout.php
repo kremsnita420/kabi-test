@@ -6,6 +6,7 @@ declare(strict_types=1);
 // - In dev: set VITE_DEV=1 and run `npm run dev` to load assets from Vite (HMR/live reload).
 // - In prod: run `npm run build` and assets are served from /public/assets/*.
 $viteDev = file_exists(__DIR__ . '/../../.vite-dev');
+
 ?>
 <!DOCTYPE html>
 <html>

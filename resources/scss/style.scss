@@ -1,4 +1,6 @@
 // Main SCSS entry (imports only)
+@use "base/fonts";
+
 @use "abstracts/variables" as *;
 @use "abstracts/mixins" as *;
 
