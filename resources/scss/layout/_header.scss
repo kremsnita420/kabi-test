@@ -1,0 +1,9 @@
+@use "../abstracts/variables" as *;
+
+header {
+  margin-bottom: $space;
+
+  a {
+    text-decoration: none;
+  }
+}

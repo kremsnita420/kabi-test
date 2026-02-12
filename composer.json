@@ -1,0 +1,11 @@
+{
+  "name": "safet/minimal-mvc",
+  "description": "Hardened Minimal MVC Scaffold",
+  "type": "project",
+  "require": {},
+  "autoload": {
+    "psr-4": {
+      "App\\": "src/"
+    }
+  }
+}

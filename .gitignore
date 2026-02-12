@@ -1,0 +1,49 @@
+# =========================
+# Composer / PHP
+# =========================
+vendor/
+composer.phar
+
+# =========================
+# Node / Vite
+# =========================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Vite cache
+.vite/
+
+# =========================
+# Build output (optional)
+# If you want to keep compiled assets committed, remove these two lines
+# =========================
+# public/assets/css/
+# public/assets/js/
+
+# =========================
+# Environment / secrets
+# =========================
+.env
+.env.*
+!.env.example
+
+# =========================
+# OS junk
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Editor junk
+# =========================
+.vscode/
+.idea/
+*.swp
+
+# =========================
+# Apache
+# =========================
+*.log
