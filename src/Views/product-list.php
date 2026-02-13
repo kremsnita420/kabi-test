@@ -1,5 +1,3 @@
-<h1>Products</h1>
-
 <div class="grid">
     <?php foreach ($products as $product): ?>
         <div class="card">

@@ -1,7 +1,8 @@
-import "../scss/style.scss";
-// JS entry (SOC-friendly)
-import { initProducts } from "./modules/products.js";
+// import "@scss/style.scss";
+import { initProducts } from "@js/modules/products.js";
+import { initNavToggle } from "@js/modules/nav.js";
 
 document.addEventListener("DOMContentLoaded", () => {
+  initNavToggle();
   initProducts();
 });

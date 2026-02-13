@@ -1,5 +1,5 @@
-import { qs } from "../core/dom.js";
-import { log } from "../utils/logger.js";
+import { qs } from "@js/core/dom.js";
+import { log } from "@js/utils/logger.js";
 
 export const initProducts = () => {
   // Example: determine page type by presence of elements.
