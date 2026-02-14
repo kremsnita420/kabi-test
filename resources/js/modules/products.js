@@ -1,16 +1,19 @@
-import { qs } from "@js/core/dom.js";
-import { log } from "@js/utils/logger.js";
+export function initProductGallery() {
+  const main = document.getElementById("productMainImage");
+  if (!main) return;
 
-export const initProducts = () => {
-  // Example: determine page type by presence of elements.
-  const grid = qs(".grid");
-  if (grid) {
-    log("Product list loaded");
-    return;
-  }
+  const thumbs = document.querySelectorAll(".product-gallery__thumb");
+  if (!thumbs.length) return;
 
-  const title = qs("h1");
-  if (title) {
-    log("Product single loaded");
-  }
-};
+  thumbs.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const src = btn.dataset.img;
+      if (!src) return;
+
+      main.src = src;
+
+      thumbs.forEach(b => b.classList.remove("is-active"));
+      btn.classList.add("is-active");
+    });
+  });
+}

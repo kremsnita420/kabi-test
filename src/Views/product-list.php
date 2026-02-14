@@ -1,9 +1,0 @@
-<div class="grid">
-    <?php foreach ($products as $product): ?>
-        <div class="card">
-            <h2><?= htmlspecialchars($product['name'], ENT_QUOTES, 'UTF-8') ?></h2>
-            <p><?= number_format($product['price'], 2) ?> €</p>
-            <a href="/product/<?= $product['id'] ?>"><i class="fa-solid fa-plus"></i> Več</a>
-        </div>
-    <?php endforeach; ?>
-</div>

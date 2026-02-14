@@ -20,7 +20,7 @@ final class ProductController extends Controller
     {
         $products = $this->repository->all();
 
-        $this->render('product-list', [
+        $this->render('partials/product-list', [
             'products' => $products,
             'title'    => 'Izdelki – Kabi Test',
             'head'     => '<meta name="description" content="Seznam izdelkov Kabi Test">',

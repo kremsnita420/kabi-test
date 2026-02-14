@@ -6,3 +6,26 @@
     @content;
   }
 }
+
+// Buttons
+@mixin base-btn {
+    cursor: pointer;
+    text-transform: uppercase;
+      color: #5EA0E0;
+      border: 2px solid #5EA0E0;
+      border-radius: 5px;
+      display: block;
+      padding: 10px;
+      font-weight: bold;
+      text-decoration: none;
+    transition: opacity 0.5 ease-in-out;
+  
+    &:active,
+    &:focus {
+        outline: none;
+    }
+
+    &:hover {
+        opacity: 0.8;
+    }
+}
