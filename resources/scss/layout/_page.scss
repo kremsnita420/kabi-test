@@ -1,11 +1,28 @@
 @use "abstracts/variables" as *;
 @use "abstracts/mixins" as *;
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    background-color: $light-gray;
+      font-size: 1.6rem;
+  color: $primary-text-color;
+}
 .container {
     max-width: 1141px;
-    margin: 0 auto;
-   
+    width: 100%;
+    margin-inline: auto;
+    padding-left: $space;
+    padding-right: $space;
+    margin-bottom: $space;
 
     @include mobile {
-        padding: 10px;
+        padding-left: calc($space / 2);
+        padding-right: calc($space / 2);
+        margin-bottom: calc($space / 2);
+
     }
+   
 }

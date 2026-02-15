@@ -3,8 +3,6 @@ import { defineConfig } from "vite";
 import path from "path";
 
 export default defineConfig({
-  // Helpful when your PHP app is served from Apache (e.g. http://kabi-test.local)
-  // while Vite runs on http://localhost:5173
   server: {
     host: "localhost",
     port: 5173,
@@ -23,11 +21,11 @@ export default defineConfig({
     alias: {
       "@js": path.resolve(__dirname, "resources/js"),
       "@scss": path.resolve(__dirname, "resources/scss"),
+      "@img": path.resolve(__dirname, "public/assets"), // optional convenience
     },
   },
 
   // SCSS resolver (lets you use `@use "abstracts/variables"` etc.)
-  // NOTE: with includePaths you can do `@use "abstracts/variables" as *;`
   css: {
     preprocessorOptions: {
       scss: {
@@ -37,27 +35,32 @@ export default defineConfig({
   },
 
   build: {
-    // Compiled output goes here (safe to wipe on each build)
     outDir: "public/build",
     emptyOutDir: true,
 
     rollupOptions: {
-      // Two explicit inputs to keep stable output filenames (no hashes)
       input: {
         app: path.resolve(__dirname, "resources/js/app.js"),
         style: path.resolve(__dirname, "resources/scss/style.scss"),
+        "admin-upload-hub": path.resolve(__dirname, "resources/js/pages/admin-upload-hub.js"),
+
       },
+
       output: {
-        // Stable JS entry filename
-        entryFileNames: (chunk) =>
-          chunk.name === "app" ? "js/app.js" : "js/[name].js",
+        // Stable JS entry filenames (explicit mapping)
+        entryFileNames: (chunk) => {
+          if (chunk.name === "app") return "js/app.js";
+          if (chunk.name === "admin-upload-hub") return "js/admin-upload-hub.js";
+          return "js/[name].js";
+        },
+
         chunkFileNames: "js/[name].js",
 
-        // Stable CSS filename + other assets
+        // Stable CSS + assets
         assetFileNames: (assetInfo) => {
-          // Rollup v4+: use `names` (plural). `name` is deprecated.
           const names = assetInfo.names || [];
 
+          // All CSS into one predictable file
           if (names.some((n) => n.endsWith(".css"))) {
             return "css/style.css";
           }

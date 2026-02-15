@@ -1,0 +1,250 @@
+@use "abstracts/variables" as *;
+@use "abstracts/mixins" as *;
+
+.admin-upload {
+  margin: 2rem auto;
+}
+
+.admin-upload__header {
+  margin-bottom: 2rem;
+
+  h1 {
+    margin: 0 0 6px;
+    font-size: $medium-heading;
+    line-height: 1.15;
+  }
+
+  p {
+    margin: 0;
+    opacity: 0.9;
+  }
+}
+
+.admin-upload__controls {
+  margin-bottom: 2rem;
+}
+
+.admin-upload__label {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.admin-upload__select-wrap {
+  display: grid;
+  gap: 1rem;
+  max-width: 65rem;
+}
+
+.admin-upload__search {
+  width: 100%;
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.16);
+  background: rgba(255, 255, 255, 0.9);
+  outline: none;
+
+  &:focus {
+    border-color: rgba(0, 0, 0, 0.35);
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
+  }
+}
+
+.admin-upload__select {
+  width: 100%;
+  border-radius: 1rem;
+  border: 1px solid rgba(0, 0, 0, 0.16);
+  background: rgba(255, 255, 255, 0.9);
+  padding: 1rem;
+  line-height: 1.3;
+  outline: none;
+
+  option {
+    padding: 1rem;
+  }
+
+  &:focus {
+    border-color: rgba(0, 0, 0, 0.35);
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
+  }
+}
+
+.admin-upload__target {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 1rem;
+  background: rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+
+  .admin-upload__target-name {
+    font-weight: 800;
+  }
+
+  .admin-upload__target-path {
+    opacity: 0.85;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: $small-text;
+  }
+}
+
+.admin-upload__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+.dropzone {
+  border: 2px dashed rgba(0, 0, 0, 0.2);
+  border-radius: 2rem;
+  padding: 2rem;
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.02);
+  transition: transform 120ms ease, background 120ms ease, border-color 120ms ease, opacity 120ms ease;
+  min-height: 22rem;
+
+  .dropzone__inner {
+    text-align: center;
+    display: grid;
+    gap: 1rem;
+    place-items: center;
+  }
+
+  i {
+    font-size: $large-heading;
+    opacity: 0.9;
+  }
+
+  p {
+    margin: 0;
+    font-size: $medium-text;
+  }
+
+  small {
+    opacity: 0.8;
+  }
+
+  &:hover {
+    border-color: rgba(0, 0, 0, 0.35);
+    background: rgba(0, 0, 0, 0.04);
+  }
+}
+
+.dropzone.is-dragover {
+  transform: scale(1.01);
+  border-color: rgba(0, 0, 0, 0.45);
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.dropzone.is-loading {
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+.dropzone.is-disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.upload-result {
+  min-height: 20rem;
+}
+
+.upload-result__empty,
+.upload-result__loading,
+.upload-result__error {
+  padding: 2rem;
+  border-radius: 2rem;
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.upload-result__error {
+  background: rgba(255, 0, 0, 0.06);
+  border: 1px solid rgba(255, 0, 0, 0.14);
+}
+
+.upload-result__card {
+  padding: 2rem;
+  border-radius: 2rem;
+  background: rgba(0, 0, 0, 0.03);
+
+  h2 {
+    margin: 0 0 1rem;
+  }
+
+  p {
+    margin: 0 0 1rem;
+  }
+
+  code {
+    display: block;
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.75);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: $small-text;
+    overflow: auto;
+  }
+}
+
+.upload-result__previews {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.upload-result__preview {
+  h3 {
+    margin: 0 0 8px;
+    font-size: $small-text;
+    opacity: 0.9;
+  }
+
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 1rem;
+    background: #fff;
+  }
+}
+
+.upload-result__details {
+  margin-top: 1.5rem;
+
+  summary {
+    cursor: pointer;
+    font-weight: 700;
+  }
+
+  pre {
+    margin: 1rem 0 0;
+    padding: 1rem;
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.75);
+    overflow: auto;
+    font-size: 1.2rem;
+    line-height: 1.4;
+  }
+}
+
+/* Mobile: stack into one column */
+@include mobile {
+  .admin-upload__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .upload-result__previews {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-upload__select {
+    size: 8; // visual hint; doesn't affect actual attribute
+  }
+}

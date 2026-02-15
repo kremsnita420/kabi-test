@@ -5,15 +5,16 @@
 
 .site-header {
   margin-bottom: $space;
+  
 }
 
 .top-nav {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 1rem;
   padding: 6px;
   border-radius: 12px;
-  min-height: 50px;
+  min-height: 5rem;
   background: linear-gradient(180deg, #58c7ff 0%, #7b7cff 100%);
 }
 
@@ -22,12 +23,13 @@
 .site-logo {
   display: flex;
   align-items: center;
-  padding: 6px 10px;
-  margin-bottom: 30px;
+ 
+  padding-top: 3rem;
+  padding-bottom: 3rem;
 }
 
 .site-logo img {
-  height: 42px;
+  height: 4.2rem;
   width: auto;
   display: block;
 }
@@ -56,8 +58,9 @@
 
 .nav-item {
   display: inline-flex;
+  font-size: $medium-text;
   align-items: center;
-  gap: 10px;
+  gap: 1rem;
   padding: 14px 18px;
   color: #fff;
   text-decoration: none;
@@ -69,7 +72,6 @@
 
 .nav-item.is-active {
   text-transform: uppercase;
-  border-bottom: 1px solid #fff;
 }
 
 /* ===== HAMBURGER ===== */
@@ -123,6 +125,8 @@
   .site-logo {
     float: left;
     margin-bottom: unset;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
   }
 
   .top-nav {

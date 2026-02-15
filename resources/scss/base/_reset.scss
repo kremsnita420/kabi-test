@@ -1,3 +1,6 @@
+@use "abstracts/variables" as *;
+@use "abstracts/mixins" as *;
+
 /* 1. Use a more-intuitive box-sizing model */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -12,6 +15,7 @@
 @media (prefers-reduced-motion: no-preference) {
   html {
     interpolate-size: allow-keywords;
+      font-size: 62.5%;
   }
 }
 
@@ -20,6 +24,11 @@ body {
   line-height: 1.5;
   /* 5. Improve text rendering */
   -webkit-font-smoothing: antialiased;
+
+;
+}
+h1, h2, h3, h4, h5, h6 {
+color: $black;
 }
 
 /* 6. Improve media defaults */

@@ -1,6 +1,3 @@
-<h1>Home</h1>
-
-
 <h1>Pišite nam</h1>
 
 <form method="post" action="#">

@@ -11,13 +11,21 @@ use App\Controllers\NotFoundController;
 
 $router = new Router();
 
+// Public routes
 $router->get('/', [PageController::class, 'home']);
 $router->get('/o-nas', [PageController::class, 'about']);
 $router->get('/kontakt', [PageController::class, 'contact']);
 $router->get('/pisite-nam', [PageController::class, 'writeToUs']);
 $router->get('/izdelki', [ProductController::class, 'index']);
-$router->get('/product/{id}', [ProductController::class, 'show']);
+$router->get('/product/{id:\d+}', [ProductController::class, 'show']);
 
+// Admin routes
+// Admin routes
+$router->get('/admin/upload', [\App\Controllers\Admin\UploadHubController::class, 'index']);
+$router->post('/admin/upload/{slug:[a-z0-9\-]+}', [\App\Controllers\Admin\UploadController::class, 'store']);
+
+// 404 handler
 $router->setNotFoundHandler([NotFoundController::class, 'index']);
 
+// Dispatch the request
 $router->dispatch($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);

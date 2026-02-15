@@ -1,5 +1,19 @@
 // Design tokens / variables
 $font-family-base: "Open Sans", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-$space: 20px;
+$space: 3rem;
 $border-color: #ddd;
-$max-mobile: 500px;
+$max-mobile: 50rem;
+
+// Font Size
+$large-heading: 3.2rem;
+$medium-heading: 2.4rem;
+$small-heading: 2rem;
+
+$small-text: 1.3rem;
+$medium-text: 1.6rem;
+
+
+// Colors
+$primary-text-color: #686868;
+$light-gray: #EEF3F5;
+$black: #262626;

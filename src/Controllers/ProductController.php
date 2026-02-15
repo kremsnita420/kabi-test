@@ -43,13 +43,23 @@ final class ProductController extends Controller
             return;
         }
 
+
+
         // Try a few common keys; adjust if your repo uses different field names.
         $name = $product['name'] ?? $product['title'] ?? $product['product_name'] ?? ('Izdelek #' . $id);
+        $galleryItems = $product['gallery_items'] ?? [];
+        $firstHero    = $galleryItems[0]['hero'] ?? ($product['images']['hero'] ?? []);
 
-        $this->render('product-single', [
+        $preloadImage = $firstHero['webp']
+            ?? $firstHero['jpg']
+            ?? ($product['image'] ?? null);
+
+
+        $this->render('pages/product-single', [
             'product' => $product,
             'title'   => $name . ' – Kabi Test',
             'head'    => '<meta name="description" content="Podrobnosti izdelka: ' . $this->e((string) $name) . '">',
+            'preloadImage' => $preloadImage,
         ]);
     }
 }

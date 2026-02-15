@@ -10,6 +10,7 @@
 // Buttons
 @mixin base-btn {
     cursor: pointer;
+    font-size: $small-text;
     text-transform: uppercase;
       color: #5EA0E0;
       border: 2px solid #5EA0E0;

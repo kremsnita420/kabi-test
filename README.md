@@ -1,332 +1,247 @@
-# Minimal MVC (Hardened) + SCSS/JS Build Pipeline (Vite) — Interview Task Scaffold
+# Kabi Test – Hardened Minimal MVC Scaffold
 
-This repository is a **small, framework-free PHP 8 application** built to match a typical “design → list page + detail page” interview assignment.
+Kabi Test is a lightweight PHP project that demonstrates how to build a small product‑catalogue website with a bespoke MVC architecture.  It combines a simple router, controller and view layer with a Vue‑free front end built using vanilla JavaScript modules, SCSS and the [Vite](https://vitejs.dev/) build tool.  The site renders a home page, informational pages (About, Contact, Write to Us), a product listing, detailed product pages and an admin “upload hub” for adding product images.  Uploaded images are automatically converted into multiple responsive variants (hero, thumbnail and `@2x` WebP/JPG versions) using the Intervention Image library.  The codebase is intentionally minimal and easy to extend, making it a good starting point for learning custom PHP architectures or prototyping small e‑commerce sites.
 
-It intentionally balances two things:
-- **Simplicity** (the scope is tiny: 5 products + detail page)
-- **Professional structure** (clean routing, MVC separation, safe rendering, build pipeline)
+## Features
 
-The result runs on:
-- **Apache 2.4** (with `mod_rewrite`)
-- **PHP 8.x**
-- Optional: **Node.js** for building SCSS/JS (prebuilt assets are included)
+- **Minimal MVC framework** – A tiny router and base controller deliver clean URL handling and view rendering without a heavy framework.
+- **Product catalogue** – `ProductController` lists products and renders detailed product pages.  A helper decorates each product with responsive image variants for the gallery.
+- **Admin image upload** – Administrators can upload JPEG/PNG files via `/admin/upload`.  The `UploadController` validates input, stores originals and delegates to `ImageService` to generate hero and thumbnail variants in JPG and WebP formats (plus `@2x` versions for HiDPI devices).  A small JS app (`admin-upload-hub.js`) powers the drag‑and‑drop interface and shows JSON responses.
+- **Responsive front end** – Styles are written in modular SCSS with BEM naming.  Navigation toggles adapt automatically on mobile.  The product gallery uses `<picture>` elements and JavaScript to switch images when thumbnails are clicked.
+- **Asset pipeline with Vite** – The Node/Vite setup compiles ES module JavaScript and SCSS, injects module aliases, and outputs predictable filenames in `public/build`.  During development a `.vite-dev` marker file triggers hot module reloading and on‑the‑fly SCSS processing.
+- **Image variant helper** – The `App\Views\Helpers\Picture` helper outputs `<picture>` tags with appropriate `source`/`srcset` attributes, skipping missing variants to avoid 404s.
+- **No database required (demo mode)** – Products are defined in an in‑memory array (`ProductRepository`).  Images live in `public/assets/product-images/<slug>` and are discovered dynamically.  This design makes deployment simple but can be swapped for a real database.
 
----
+## Architecture Overview
 
-## What the task asked for (mapped to implementation)
+The project follows a conventional MVC pattern with a custom implementation.  At a high level, the runtime flow is:
 
-### ✅ “In PHP (+CSS/SCSS, JS) build a page and subpage from the design”
-- PHP renders HTML views via a minimal MVC pattern.
-- Styling is authored in **SCSS** (split into partials) and compiled to CSS.
-- JS is organized by **Separation of Concerns (SOC)** into small modules.
+1. **Entry point** – `public/index.php` is the front controller.  It autoloads dependencies via Composer, instantiates a `Router`, registers routes and handlers, and calls `dispatch()`.
+2. **Router** – `App\Core\Router` normalises the request path, matches it against registered route patterns (supports parameterised segments like `/product/{id:\d+}`), extracts parameters and calls the designated controller method.  If no route matches, a not‑found handler renders a 404 page.
+3. **Controllers** – Controllers extend `App\Core\Controller` which provides a `render()` helper.  Significant controllers include:
+   - `PageController` – Renders static pages (home, about, contact, write‑to‑us).
+   - `ProductController` – Lists all products (`index()`) and displays a single product (`show()`).  It retrieves data from `ProductRepository` and passes it to the views.
+   - `Admin\UploadHubController` – Renders the admin upload page with a list of available products.  It injects the JS entrypoint for the upload UI via the `$pageScripts` variable.
+   - `Admin\UploadController` – Handles POST requests when an image is uploaded.  It validates the slug and file, stores the uploaded file in `/public/assets/product-images/{slug}`, converts PNG to JPG, and uses `ImageService` to generate hero/thumb variant sets.  A JSON payload describing the stored files is returned.
+   - `NotFoundController` – Fallback 404 page.
+4. **Models** – `ProductRepository` stores product metadata in a PHP array.  Its `decorateImages()` method scans the file system for uploaded images and builds a `gallery_items` array containing hero/thumb variant sets.  This avoids repeated image discovery in views.
+5. **Views** – Views live under `src/Views`.  `layout.php` defines the overall HTML skeleton and conditionally loads Vite dev scripts or built assets.  Specific pages are rendered in the `<main>` section.  Partials (header, footer, product list) and helpers (the `Picture` class) encapsulate reusable markup.  The product gallery is implemented using `<picture>` elements and populated dynamically by the JS module.
+6. **Services** – `ImageService` wraps the Intervention Image library.  Given an uploaded image, it crops it to fixed dimensions for hero (`1000×700`) and thumbnail (`300×300`) variants, saving JPG and WebP versions at 1× and 2× resolutions.
+7. **Front‑end assets** – Client‑side JavaScript modules live in `resources/js`.  They initialise the navigation toggle (`modules/nav.js`), handle product gallery switching (`modules/products.js`) and implement the admin upload page (`pages/admin-upload-hub.js`).  SCSS styles live in `resources/scss` and are organised into `abstracts`, `base`, `components`, `layout`, `pages` and `utilities` folders.  Vite bundles these assets and outputs them into `public/build`.
 
-### ✅ “Product list page with 5 products”
-- `/products` renders the list of **exactly 5** in-memory products.
+### Folder Structure
 
-### ✅ “Clicking ‘Več’ opens a product subpage”
-- Each card links to `/product/{id}`.
-- `/product/1` renders a single product page.
+```
+.
+├── composer.json             # PHP dependencies (only Intervention Image is required)
+├── public/                   # Publicly served assets
+│   ├── index.php             # Front controller
+│   ├── assets/               # Fonts, images and product images
+│   └── build/                # Vite‑generated JS/CSS (after running `npm run build`)
+├── resources/                # Front‑end source
+│   ├── js/                   # ES modules for navigation, products and admin upload
+│   └── scss/                 # SCSS organised by responsibility (abstracts, components, layout…)
+├── src/                      # PHP application
+│   ├── Core/                 # Base Controller and Router classes
+│   ├── Controllers/          # Page, product and admin controllers
+│   ├── Models/               # ProductRepository
+│   ├── Services/             # ImageService (uses Intervention Image)
+│   └── Views/                # Layout, pages, partials and view helpers
+├── vendor/                   # Composer dependencies (Intervention Image)
+└── vite.config.js            # Vite configuration and build pipeline
+```
 
-### ✅ “May use frameworks/libraries / template system”
-- We deliberately **did not** add a heavy PHP framework (Laravel/Symfony), because the scope is tiny and interviewers often penalize overkill.
-- Instead, we used:
-  - A **minimal router**
-  - A **simple layout + view system**
-  - **Composer PSR-4 autoloading** (professional, lightweight)
+## Tech Stack
 
-### ✅ “Responsive; mobile under 500px”
-- SCSS includes a dedicated `@mixin mobile` breakpoint at **500px**.
+- **Backend:** PHP 8+, Composer, custom MVC classes.  The only third‑party PHP dependency is `intervention/image` (for image manipulation).
+- **Frontend:** Vanilla ES modules, SCSS compiled with Dart Sass via Vite.  Navigation and gallery behaviour are implemented without frameworks.  FontAwesome provides icons, and Open Sans fonts are bundled locally.
+- **Build Tools:** Vite orchestrates JavaScript and SCSS compilation.  A `.vite-dev` file in the project root enables dev mode; otherwise built assets in `public/build` are used.  In dev mode Vite runs a local HMR server on port `5173`.
+- **Image Processing:** Intervention Image (GD driver by default) converts uploaded images into multiple sizes and formats.  If Imagick is available, swapping `new Driver()` for `new Imagick\Driver()` in `ImageService` can improve quality and performance.
 
-### ✅ “Must run on Apache 2.4 with PHP 8 (and .htaccess allowed)”
-- Apache rewrite rules route all requests to `public/index.php`.
-- No reliance on nginx-only features.
-
----
-
-## Why we used this architecture (and what it demonstrates)
-
-Interview tasks like this rarely test “can you render 5 products.”
-They test whether you can build something that is:
-- maintainable,
-- readable,
-- secure by default,
-- and easy to extend.
-
-This scaffold demonstrates exactly that, without bloat.
-
-### 1) Front Controller (single entry point)
-All requests go through:
-- `public/index.php`
-
-Why:
-- Central place to bootstrap dependencies and route requests
-- Predictable request flow
-- Standard practice in modern PHP apps
-
-### 2) Clean routing (no giant `if/else` chains)
-`src/Core/Router.php` maps URL paths to controllers:
-
-- `GET /products` → `ProductController::index`
-- `GET /product/{id}` → `ProductController::show`
-
-Why:
-- Keeps URL mapping in one place
-- Easy to add new pages later
-- Makes code review and maintenance easier
-
-### 3) Minimal MVC separation
-- **Model**: `src/Models/ProductRepository.php` (data source)
-- **Controller**: `src/Controllers/ProductController.php` (logic + orchestration)
-- **Views**: `src/Views/*.php` (presentation)
-
-Why:
-- Business logic doesn’t leak into templates
-- Templates stay focused on rendering
-- Controller logic stays testable and readable
-
-### 4) PSR-4 autoloading via Composer
+## PSR-4 autoloading via Composer
 `composer.json` defines:
 
 ```json
 "autoload": { "psr-4": { "App\\": "src/" } }
 ```
+## Installation
 
-Why:
-- No manual `require_once` spaghetti
-- Standard PHP ecosystem practice
-- Makes namespacing “just work”
+1. **Clone the repository** and change into the project directory:
 
-### 5) Hardened input handling
-In `ProductController::show(string $id)`:
-- We validate the path segment with `ctype_digit($id)`
-- We cast to int only after validation
-- We return 404 when invalid or missing
+   ```sh
+   git clone <repo-url> kabi-test
+   cd kabi-test/kabi-test
+   ```
 
-Why:
-- Prevents accidental type confusion
-- Avoids exposing internals on malformed URLs
-- Demonstrates defensive programming
+2. **Install PHP dependencies**:
 
-### 6) Basic XSS hygiene (escaping output)
-Templates use `htmlspecialchars(..., ENT_QUOTES, 'UTF-8')`.
-
-Why:
-- Output escaping is one of the simplest high-value security measures
-- Even if data is “internal,” demonstrating safety-first habits scores points
-
----
-
-## Frontend build: why Vite (instead of Webpack)
-
-We chose **Vite** because it is:
-- faster to set up,
-- less configuration-heavy than Webpack,
-- still industry-standard,
-- perfect for a small interview repo.
-
-Webpack is powerful, but for this task it adds complexity with little benefit.
-
-### Important detail: stable filenames (no hashes)
-The Vite config outputs:
-- `public/assets/css/style.css`
-- `public/assets/js/app.js`
-
-Why:
-- PHP templates can reference predictable file paths
-- No manifest or asset versioning needed for a small task
-- Still “production-like” without extra moving parts
-
-### Prebuilt assets included
-The repository includes compiled files in `public/assets/*` so it runs even if the reviewer does **not** install Node.
-
-Why:
-- Interviewers sometimes only run PHP/Apache locally
-- This avoids “it doesn’t work on my machine” friction
-- You still provide the build pipeline for correctness
-
----
-
-## SCSS organization (best-practice split)
-
-SCSS follows a clean split inspired by the “7–1” pattern:
-
-```
-resources/scss/
-  style.scss                # Entry (imports only)
-  abstracts/_variables.scss  # tokens (colors, spacing, breakpoints)
-  abstracts/_mixins.scss     # reusable mixins (mobile breakpoint)
-  base/_reset.scss           # minimal reset / box sizing
-  base/_typography.scss      # font + base sizing
-  layout/_header.scss        # layout-level header rules
-  components/_grid.scss      # reusable grid component
-  components/_card.scss      # reusable card component
-  pages/_products.scss       # page-specific rules (kept minimal)
-  utilities/_helpers.scss    # helper classes (.hidden etc.)
-```
-
-Why:
-- Scales cleanly as UI grows
-- Encourages reusable components
-- Prevents “one giant style.css” chaos
-
----
-
-## JS organization (Separation of Concerns)
-
-JS is split by responsibility:
-
-```
-resources/js/
-  app.js                # Entry point
-  core/dom.js            # DOM primitives (qs/qsa)
-  modules/products.js    # feature module (products page behavior)
-  utils/logger.js        # small utility wrapper
-```
-
-Why:
-- Each file has a single purpose
-- Easy to test/replace
-- Avoids “one giant app.js” as the project grows
-
-For the interview task, JS is intentionally minimal.
-We include structure without inventing fake features.
-
----
-
-## Project structure overview
-
-```
-public/
-  index.php              # Front controller
-  .htaccess              # Apache rewrite
-  assets/
-    css/style.css        # compiled output (prebuilt)
-    js/app.js            # compiled output (prebuilt)
-
-src/
-  Core/
-    Router.php           # routing + dispatch
-    Controller.php       # base controller (render helper)
-  Controllers/
-    ProductController.php
-    NotFoundController.php
-  Models/
-    ProductRepository.php
-  Views/
-    layout.php
-    product-list.php
-    product-single.php
-
-resources/
-  scss/                  # SCSS source (split structure)
-  js/                    # JS source (SOC structure)
-
-vite.config.js
-package.json
-composer.json
-README.md
-```
-
----
-
-## Running the project
-
-### 1) PHP/Apache
-1. Install dependencies (autoload):
-   ```bash
+   ```sh
+   composer install
    composer dump-autoload
    ```
 
-2. Point Apache **DocumentRoot** to `public/`.
+3. **Install Node dependencies** for the asset pipeline:
 
-3. Ensure Apache allows `.htaccess` overrides:
-   - `AllowOverride All`
-   - `mod_rewrite` enabled
-
-Open:
-- `http://localhost/products`
-- `http://localhost/product/1`
-
-### 2) Build assets (optional, but recommended if you change SCSS/JS)
-1. Install Node deps:
-   ```bash
+   ```sh
    npm install
    ```
 
-2. Build:
-   ```bash
+4. **Build assets** for production:
+
+   ```sh
    npm run build
    ```
 
-Outputs:
-- `public/assets/css/style.css`
-- `public/assets/js/app.js`
+   During development you can run the Vite dev server instead of building:
 
----
-
-## Design decisions (in plain interview language)
-
-- **No DB**: the task didn’t ask; in-memory repository is enough and keeps focus on structure.
-- **No heavy PHP framework**: demonstrates you can architect cleanly without scaffolding doing it for you.
-- **Autoloading + namespaces**: shows modern PHP practices.
-- **Defensive routing + 404 handling**: shows robustness.
-- **Split SCSS/JS**: shows you understand maintainability, not just “make it work.”
-- **Prebuilt assets included**: reduces reviewer friction.
-
----
-
-## Extending (if asked in interview)
-This scaffold can grow without refactor pain:
-- Add new pages by adding route + controller + view
-- Swap in Twig later if needed
-- Replace repository with database layer (PDO/Doctrine) cleanly
-- Add asset versioning if project becomes larger
-
----
-
-## Quick checklist (what to mention during interview)
-- Front controller + clean routing
-- MVC separation
-- PSR-4 autoloading
-- Output escaping (XSS hygiene)
-- Mobile breakpoint under 500px
-- Vite chosen over Webpack for simplicity + speed
-- Stable asset filenames to keep PHP templates simple
-- Prebuilt assets shipped to avoid environment issues
-
----
-
-## Dev workflow (live SCSS updates / HMR)
-
-### Why changes didn't reflect before
-When you open the app via Apache/PHP (e.g. `/products`), the template normally loads **built** files from:
-- `/public/assets/css/style.css`
-- `/public/assets/js/app.js`
-
-Running `npm run dev` starts a **separate** Vite dev server on `http://localhost:5173`, but your PHP templates won't use it unless you explicitly load Vite assets.
-
-### How dev mode works here
-- `resources/js/app.js` imports SCSS: `import "../scss/style.scss";`
-- `src/Views/layout.php` switches between:
-  - **Vite dev server** (HMR/live reload) when `VITE_DEV=1`
-  - **built assets** when not in dev
-
-### Start dev mode
-1. Start Vite:
-   ```bash
-   VITE_DEV=1 npm run dev
+   ```sh
+   touch .vite-dev       # tells layout.php to use the dev server
+   npm run dev
    ```
 
-2. Open the app via Apache as usual:
-   - `/products`
-   - `/product/1`
+5. **Serve the application.**  You can use PHP’s built‑in server for local development:
 
-SCSS changes should now reflect instantly.
+   ```sh
+   php -S localhost:8000 -t public
+   ```
 
-### If `VITE_DEV` is not visible in PHP
-Some Apache/PHP setups don't inherit shell environment variables.
-If `getenv('VITE_DEV')` doesn't work for you, quickest workaround for interview tasks:
-- temporarily change `$viteDev` in `layout.php` to `true`
-- or implement a small flag file check (e.g. `file_exists(__DIR__ . '/../../.vite-dev')`)
+   Then visit `http://localhost:8000` in your browser.
+
+## Serving the Project Locally with Apache
+
+This project is designed to run behind a classic Apache + PHP setup using `public/` as the document root.
+
+### Move project into Apache web root
+
+```bash
+sudo mv kabi-test /var/www/kabi-test
+```
+
+### Enable rewrite
+
+```bash
+sudo a2enmod rewrite
+sudo systemctl restart apache2
+```
+
+### Virtual host
+
+```apache
+<VirtualHost *:80>
+    ServerName kabi-test.local
+    DocumentRoot /var/www/kabi-test/public
+
+    <Directory /var/www/kabi-test/public>
+        AllowOverride All
+        Require all granted
+    </Directory>
+</VirtualHost>
+```
+
+### Routing
+
+Create `public/.htaccess`
+
+```apache
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [QSA,L]
+```
+
+### Install
+
+```bash
+composer install
+npm install
+npm run build
+```
+
+### Permissions
+
+```bash
+sudo chmod -R 775 public/assets
+```
+
+### Access
+
+http://kabi-test.local  
+http://kabi-test.local/admin/upload
+
+
+## Configuration
+
+- **Dev vs production mode** – The presence of a `.vite-dev` file in the project root controls whether `layout.php` loads Vite’s dev server or the built assets.  Delete this file for production.
+- **Image driver** – `ImageService` defaults to the GD driver.  If Imagick is installed, replace `new Driver()` with `new Imagick\Driver()` in `src/Services/ImageService.php` for better memory usage.
+- **Upload paths** – Uploaded images are stored under `public/assets/product-images/{slug}`.  Ensure this directory is writable by the web server.  Variant files are saved alongside the originals using the naming scheme `hero-{name}.jpg`, `hero-{name}@2x.webp`, `thumb-{name}.jpg`, etc.
+- **Environment variables** – None are required by default.  You could introduce a `.env` file and read it in `public/index.php` to configure database connections or base URLs when extending the project.
+
+## Usage Examples
+
+- **Visit the product list:** `GET /izdelki` – displays all products defined in `ProductRepository` with thumbnail images and short descriptions.
+- **View a single product:** `GET /product/2` – shows a larger gallery and detailed description for the product with ID 2.  Use the thumbnail strip to switch images; the gallery is updated via the `initProductGallery()` JS module.
+- **Upload a product image:**
+
+  1. Visit `/admin/upload` to open the upload hub.  A `<select>` lists products by name/slug; you can filter using the search box.
+  2. Select a product.  The panel shows the target directory (e.g. `/assets/product-images/headphones/`).
+  3. Drag a JPG or PNG into the dropzone or click to choose a file.  The page sends a `POST /admin/upload/{slug}` request and displays the generated hero and thumb images.  The server returns JSON like:
+
+     ```json
+     {
+       "ok": true,
+       "slug": "headphones",
+       "index": 5,
+       "original": "/assets/product-images/headphones/5.jpg",
+       "variants": {
+         "hero": {
+           "jpg": "/assets/product-images/headphones/hero-5.jpg",
+           "jpg2": "/assets/product-images/headphones/hero-5@2x.jpg",
+           "webp": "/assets/product-images/headphones/hero-5.webp",
+           "webp2": "/assets/product-images/headphones/hero-5@2x.webp"
+         },
+         "thumb": {
+           "jpg": "/assets/product-images/headphones/thumb-5.jpg",
+           "jpg2": "/assets/product-images/headphones/thumb-5@2x.jpg",
+           "webp": "/assets/product-images/headphones/thumb-5.webp",
+           "webp2": "/assets/product-images/headphones/thumb-5@2x.webp"
+         }
+       }
+     }
+     ```
+
+  You can find the newly uploaded originals and variants in the corresponding slug directory under `public/assets/product-images/`.
+
+## Development Notes
+
+- **Extending the product repository** – Currently products live in an array.  To connect to a database, replace `ProductRepository::all()` and `find()` with queries, and remove the in‑memory `$products`.  Consider using PDO or an ORM of your choice.  Ensure that `decorateImages()` still locates gallery images on disk.
+- **Adding routes** – Use `$router->get()`, `$router->post()`, etc. in `public/index.php` to register new endpoints.  The route pattern syntax supports named parameters with optional regex (e.g. `/blog/{slug:[a-z\-]+}`).  Provide `[Controller::class, 'method']` as the handler.
+- **Adding new pages** – Create a new view file under `src/Views/pages`, implement a controller method that calls `$this->render('pages/your-view', [...])`, and add a route pointing to it in `index.php`.
+- **Switching image dimensions** – To change hero/thumb sizes, edit the hardcoded widths and heights in `ImageService::generateAll()` and re‑upload images.  You may also wish to update SCSS variables that define card and gallery dimensions.
+- **Building assets** – `vite.config.js` defines multiple entry points: `app` (shared scripts), `style.scss` (global styles) and `admin-upload-hub` (admin page).  Output filenames are fixed for predictability.  If you add new pages with dedicated JS or SCSS, update the `input` section accordingly.
+
+## Common Pitfalls
+
+- **Missing `.vite-dev` file** – When working locally, remember to create a `.vite-dev` file in the project root **before** running `npm run dev`; otherwise `layout.php` will load the production assets, which might not exist yet.
+- **Unwritable upload directory** – The web server must have write permission to `public/assets/product-images`.  Otherwise image uploads will fail with HTTP 500.
+- **Image processing errors** – Intervention Image relies on PHP extensions (`gd` or `imagick`).  If neither is installed, `ImageService` will throw a “Failed to read image” or “No driver available” error.
+- **Stale assets** – After updating SCSS or JS, run `npm run build` (for production) or restart the Vite dev server.  Otherwise the browser may continue to use stale cached files.
+- **Large images** – Uploading very large PNGs can exhaust memory during variant generation.  Consider limiting upload file size via server configuration or modifying `ImageService` to resize images before processing.
+
+## Future Extension Points
+
+This scaffold is deliberately simple; it’s designed to be extended.  Possible enhancements include:
+
+- **Database integration** – Replace the static product array with a relational or NoSQL database.  Add CRUD operations, search and pagination.
+- **Authentication & authorisation** – Protect the admin upload section behind a login form and role checks.  Use sessions or JWTs to manage user state.
+- **REST API** – Expose product data and image uploads via JSON API endpoints to support SPA or mobile clients.  You already have `POST /admin/upload/{slug}` returning JSON; follow a similar pattern.
+- **Caching** – Introduce caching for product data and rendered views to improve performance.
+- **Testing** – Add PHPUnit tests for router routing logic, controllers and the image service.  Use a virtual filesystem to test uploads.
+- **Internationalisation (i18n)** – Extract strings into language files and allow runtime translation.
+- **CI/CD pipeline** – Integrate linting (`phpstan`, `eslint`), unit tests and automatic asset builds into your deployment process.
 
 ---
+
+_Generated README based on analysis of the provided codebase.  Some assumptions (e.g. how to initialise the project or configure environment) were made based on typical PHP/Vite setups._
+
+---
+
