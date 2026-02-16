@@ -12,7 +12,7 @@
   align-items: center;
   gap: 1rem;
   padding: 6px;
-  border-radius: 1rem;
+  border-radius: 0.5rem;
   min-height: 5rem;
   background: linear-gradient(180deg, $light-blue-color 0%, $blue-color 100%);
 }
@@ -81,7 +81,7 @@
   border: 0;
   background: rgba(0, 0, 0, 0.12);
   padding: 1rem;
-  border-radius: 1rem;
+  border-radius: 0.5rem;
   cursor: pointer;
 
   /* layout the bars with a real gap so transforms are predictable */
@@ -205,7 +205,7 @@
     color: #111;
     background: #f3f5f7;
     border: 0;
-    border-radius: 1rem;
+    border-radius: 0.5rem;
     padding: 1.5rem;
     justify-content: flex-start;
   }
