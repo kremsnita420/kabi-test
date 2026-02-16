@@ -41,10 +41,9 @@ export default defineConfig({
     rollupOptions: {
       input: {
         app: path.resolve(__dirname, "resources/js/app.js"),
-        style: path.resolve(__dirname, "resources/scss/style.scss"),
         "admin-upload-hub": path.resolve(__dirname, "resources/js/pages/admin-upload-hub.js"),
-
       },
+
 
       output: {
         // Stable JS entry filenames (explicit mapping)

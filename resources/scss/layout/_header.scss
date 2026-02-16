@@ -5,7 +5,6 @@
 
 .site-header {
   margin-bottom: $space;
-  
 }
 
 .top-nav {
@@ -23,7 +22,6 @@
 .site-logo {
   display: flex;
   align-items: center;
- 
   padding-top: 3rem;
   padding-bottom: 3rem;
 }
@@ -66,8 +64,10 @@
   text-decoration: none;
   font-weight: 600;
   white-space: nowrap;
-  border-right: 1px solid rgba(0,0,0,0.14);
-  border-radius: 1px solid transparent; /* for consistent height and to prevent shifting on active state */
+  border-right: 1px solid rgba(0, 0, 0, 0.14);
+
+  /* ✅ fixed typo: this is a border, not border-radius */
+  border: 1px solid transparent;
 }
 
 .nav-item.is-active {
@@ -85,7 +85,6 @@
   cursor: pointer;
 
   /* layout the bars with a real gap so transforms are predictable */
-  display: none;
   flex-direction: column;
   justify-content: center;
   gap: 6px;
@@ -112,14 +111,13 @@
   transform: translateY(-8px) rotate(-45deg);
 }
 
-
 /* ===== MOBILE FULLSCREEN MENU ===== */
 
 @include mobile {
-
   .site-header {
     display: flex;
     justify-content: space-between;
+    align-items: center;
   }
 
   .site-logo {
@@ -135,31 +133,64 @@
 
   .nav-toggle {
     display: inline-flex;
-    flex-direction: column;
-    z-index: 10000; /* above everything else */
+    z-index: 10000; /* above overlay */
     margin-left: auto;
   }
 
+  /* ✅ Overlay/backdrop pattern (no display:none toggling) */
   .nav-links {
-    display: none;
     position: fixed;
     inset: 0;
     z-index: 9999;
     padding: 18px;
     background: rgba(0, 0, 0, 0.45);
+
+    display: flex;
+    justify-content: flex-end; /* slide panel from the right */
+
+    /* hidden state */
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    transition: opacity 160ms ease, visibility 160ms ease;
   }
 
   .nav-links.is-open {
-    display: block;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
   }
 
   .nav-panel {
     height: 100%;
+    width: 100%;
     border-radius: 18px;
     background: #fff;
     display: flex;
     flex-direction: column;
     overflow: hidden;
+
+    /* slide-in animation */
+    transform: translateX(110%);
+    transition: transform 200ms ease;
+  }
+
+  .nav-links.is-open .nav-panel {
+    transform: translateX(0);
+  }
+
+  .nav-panel__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 14px 10px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  .nav-panel__title {
+    font-weight: 700;
+    color: #111;
   }
 
   .nav-panel__links {

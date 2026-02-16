@@ -34,6 +34,7 @@
   .product-gallery__main {
     position: relative; /* nav anchors here */
     overflow: hidden;   /* Swiper expects this */
+    border-radius: 1rem;
 
     .swiper-wrapper {
       align-items: stretch;
@@ -187,8 +188,8 @@
   .product-gallery {
     .product-gallery__thumbs {
       .swiper-slide {
-        width: 5rem;
-        height: 5rem;
+        width: 8rem;
+        height: 8rem;
       }
     }
 

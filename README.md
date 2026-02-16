@@ -273,14 +273,14 @@ RewriteRule ^ index.php [QSA,L]
 - [ ] PHP 8+ installed
 - [ ] composer install
 - [ ] composer dump-autoload
-- [ ] GD or Imagick installed
+- [ ] GD or Imagick installed (Needed only if bulk cobverting images)
 - [ ] public/assets writable
 
 ### Frontend
 
 - [ ] npm install
 - [ ] npm run build
-- [ ] remove .vite-dev file
+- [ ] remove .vite-dev file (if present)
 
 ### Server
 

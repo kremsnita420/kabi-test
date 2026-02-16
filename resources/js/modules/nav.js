@@ -1,64 +1,70 @@
 // resources/js/modules/nav.js
 export const initNavToggle = () => {
-    const toggle = document.querySelector(".nav-toggle");
-    const overlay = document.querySelector("[data-nav]");
-    const closeBtn = document.querySelector(".nav-close");
+    console.log("nav init running");
 
-    if (!toggle || !overlay) return;
+  const toggle = document.querySelector(".nav-toggle");
+  const overlay = document.querySelector("[data-nav]");
+  const closeBtn = document.querySelector(".nav-close");
 
-    const open = () => {
-        overlay.classList.add("is-open");
-        toggle.classList.add("is-open");
-        toggle.setAttribute("aria-expanded", "true");
-        overlay.setAttribute("aria-hidden", "false");
-        document.documentElement.classList.add("nav-open");
-        document.body.classList.add("nav-open");
-    };
+  if (!toggle || !overlay) return;
 
-    const close = () => {
-        overlay.classList.remove("is-open");
-        toggle.classList.remove("is-open");
-        toggle.setAttribute("aria-expanded", "false");
-        overlay.setAttribute("aria-hidden", "true");
-        document.documentElement.classList.remove("nav-open");
-        document.body.classList.remove("nav-open");
-    };
+  const open = () => {
+    overlay.classList.add("is-open");
+    toggle.classList.add("is-open");
+    toggle.setAttribute("aria-expanded", "true");
+    overlay.setAttribute("aria-hidden", "false");
+    document.documentElement.classList.add("nav-open");
+    document.body.classList.add("nav-open");
+  };
 
-    const isOpen = () => overlay.classList.contains("is-open");
+  const close = () => {
+    overlay.classList.remove("is-open");
+    toggle.classList.remove("is-open");
+    toggle.setAttribute("aria-expanded", "false");
+    overlay.setAttribute("aria-hidden", "true");
+    document.documentElement.classList.remove("nav-open");
+    document.body.classList.remove("nav-open");
+  };
 
-    toggle.addEventListener("click", (e) => {
-        e.preventDefault();
-        isOpen() ? close() : open();
-    });
+  const isOpen = () => overlay.classList.contains("is-open");
 
-    closeBtn?.addEventListener("click", (e) => {
-        e.preventDefault();
-        close();
-    });
+  toggle.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation(); // ✅ prevents weird bubbling if toggle is inside overlay
+    isOpen() ? close() : open();
+  });
 
+  closeBtn?.addEventListener("click", (e) => {
+    e.preventDefault();
+    close();
+  });
 
-    // Close when clicking outside the panel (on the backdrop)
-    overlay.addEventListener("click", (e) => {
-        if (e.target === overlay) close(); // click on dark backdrop
-    });
+  // ✅ One overlay click handler:
+  overlay.addEventListener("click", (e) => {
+    // 1) Click on backdrop closes
+    if (e.target === overlay) {
+      close();
+      return;
+    }
 
-    // Close when clicking a link
-    overlay.addEventListener("click", (e) => {
-        const a = e.target.closest("a");
-        if (a) close();
-    });
+    // 2) Click on a nav link closes (but not the toggle)
+    const a = e.target.closest("a");
+    if (a && a !== toggle && !toggle.contains(a)) {
+      close();
+    }
+  });
 
-    // Close on ESC
-    document.addEventListener("keydown", (e) => {
-        if (!isOpen()) return;
-        if (e.key === "Escape") close();
-    });
+  // ESC closes
+  document.addEventListener("keydown", (e) => {
+    if (isOpen() && e.key === "Escape") close();
+  });
 
-    // Reset when switching to desktop width
-    const mq = window.matchMedia("(max-width: 500px)");
-    const handleMq = () => {
-        if (!mq.matches) close();
-    };
-    if (typeof mq.addEventListener === "function") mq.addEventListener("change", handleMq);
-    else mq.addEventListener(handleMq);
+  // Reset when switching to desktop width
+  const mq = window.matchMedia("(max-width: 500px)");
+  const handleMq = () => {
+    if (!mq.matches) close();
+  };
+
+  if (typeof mq.addEventListener === "function") mq.addEventListener("change", handleMq);
+  else mq.addListener(handleMq); // ✅ correct fallback
 };
