@@ -23,7 +23,7 @@ $builtMap = [
 ];
 ?>
 <!DOCTYPE html>
-<html lang="sl">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -42,24 +42,24 @@ $builtMap = [
     <?php endif; ?>
 
     <?php if ($viteDev): ?>
-        <!-- ✅ DEV: load ONLY Vite (no /build assets) -->
+        <!-- DEV: Vite HMR client (must be enabled) -->
         <script type="module" src="http://localhost:5173/@vite/client"></script>
 
-        <!-- Load CSS via Vite (either via JS import or this link) -->
-        <!-- <link rel="stylesheet" href="http://localhost:5173/resources/scss/style.scss"> -->
+        <!-- DEV: load CSS ASAP (prevents FOUC) -->
+        <link rel="stylesheet" href="http://localhost:5173/resources/scss/style.scss">
 
         <!-- Main app entry -->
         <script type="module" src="http://localhost:5173/resources/js/app.js"></script>
 
-        <!-- Optional per-page modules (dev) -->
         <?php foreach ($pageScripts as $entry): ?>
             <script type="module" src="http://localhost:5173/<?= htmlspecialchars((string) $entry, ENT_QUOTES, 'UTF-8') ?>"></script>
         <?php endforeach; ?>
-
     <?php else: ?>
-        <!-- ✅ PROD: load ONLY built assets -->
+        <!-- PROD: preload CSS to reduce FOUC -->
+        <link rel="preload" as="style" href="/build/css/style.css">
         <link rel="stylesheet" href="/build/css/style.css">
     <?php endif; ?>
+
 </head>
 
 <body>

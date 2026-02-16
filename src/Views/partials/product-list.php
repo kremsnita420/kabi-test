@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Views\Helpers\Picture;
+use App\Support\UrlGenerator;
 
 $e = static fn($v) => htmlspecialchars((string) $v, ENT_QUOTES, 'UTF-8');
 
@@ -10,9 +11,12 @@ $projectRoot = dirname(__DIR__, 3);
 $publicDir   = $projectRoot . '/public';
 
 $exists = static fn(string $p) => $p !== '' && is_file($publicDir . $p);
+
+// Instantiate URL generator for dynamic route construction
+$url = new UrlGenerator();
 ?>
 
-<div class="grid container">
+<div class="grid">
     <?php foreach ($products as $product): ?>
 
         <?php
@@ -39,7 +43,7 @@ $exists = static fn(string $p) => $p !== '' && is_file($publicDir . $p);
         <div class="card">
 
             <div class="card-image">
-                <a href="/product/<?= (int)$product['id'] ?>">
+                <a href="<?= $url->product((int)$product['id']) ?>">
                     <?= Picture::render(
                         $product['images']['list'] ?? [],
                         [
@@ -63,7 +67,7 @@ $exists = static fn(string $p) => $p !== '' && is_file($publicDir . $p);
                 </p>
 
                 <div class="card-footer">
-                    <a class="btn" href="/product/<?= (int)$product['id'] ?>">
+                    <a class="btn" href="<?= $url->product((int)$product['id']) ?>">
                         <i class="fa-solid fa-plus"></i> Več o izdelku
                     </a>
                 </div>

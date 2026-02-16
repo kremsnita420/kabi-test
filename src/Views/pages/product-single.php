@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-$e = static fn($v) => htmlspecialchars((string) $v, ENT_QUOTES, 'UTF-8');
-
 use App\Views\Helpers\Picture;
+use App\Support\UrlGenerator;
+
+$e = static fn($v) => htmlspecialchars((string) $v, ENT_QUOTES, 'UTF-8');
 
 $projectRoot = dirname(__DIR__, 2);
 $publicDir   = $projectRoot . '/public';
@@ -16,6 +17,9 @@ $projectRoot = dirname(__DIR__, 3); // src/Views/pages -> project root
 $publicDir   = $projectRoot . '/public';
 
 $exists = static fn(string $publicPath) => ($publicPath !== '' && is_file($publicDir . $publicPath));
+
+// Instantiate URL generator for dynamic route construction
+$url = new UrlGenerator();
 
 $name     = $product['name'] ?? 'Izdelek';
 $subtitle = $product['short_description'] ?? '';
@@ -128,7 +132,7 @@ if ($mainWebpOk)
                 </div>
             <?php endif; ?>
 
-            <a class="btn btn--outline btn--back" href="/products">
+            <a class="btn btn--outline btn--back" href="<?= $url->products() ?>">
                 <i class="fa-solid fa-chevron-left"></i>
                 Nazaj na seznam
             </a>

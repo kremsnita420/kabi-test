@@ -20,7 +20,8 @@ final class ProductController extends Controller
     {
         $products = $this->repository->all();
 
-        $this->render('partials/product-list', [
+        // Render dedicated products page instead of a partial so layout can provide full page structure
+        $this->render('pages/products', [
             'products' => $products,
             'title'    => 'Izdelki – Kabi Test',
             'head'     => '<meta name="description" content="Seznam izdelkov Kabi Test">',
@@ -60,6 +61,11 @@ final class ProductController extends Controller
             'title'   => $name . ' – Kabi Test',
             'head'    => '<meta name="description" content="Podrobnosti izdelka: ' . $this->e((string) $name) . '">',
             'preloadImage' => $preloadImage,
+            'bodyClass' => ['page-product', 'product-' . $product['id']],
+
+            'pageScripts' => [
+                'resources/js/pages/product-single.js',
+            ],
         ]);
     }
 }

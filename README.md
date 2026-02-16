@@ -17,12 +17,36 @@ It provides:
 - PHP 8+
 - Composer (PSR‑4 autoloading)
 - Intervention Image (image resizing & WebP generation)
+- Dynamic language-aware routes (SL / EN / DE / HR)
+- Centralized route definitions via UrlGenerator
 
 ### Frontend
 - Vanilla JavaScript ES modules
 - SCSS (Dart Sass)
 - Swiper.js (product gallery)
 - Vite build system
+
+---
+
+## Dynamic Routing
+
+All routes are defined in:
+
+src/Support/UrlGenerator.php
+
+Example:
+
+products: sl → izdelki\
+en → products\
+de → produkte\
+hr → proizvodi
+
+Product pages automatically map to:
+
+/izdelek/1\
+/en/product/1\
+/de/produkt/1\
+/hr/proizvod/1
 
 ---
 
@@ -60,7 +84,7 @@ This is required for PHP to find new classes.
 
 ---
 
-## Installation (Bulletproof Flow)
+## Installation
 
 ### 1. Clone project
 
@@ -97,16 +121,42 @@ touch .vite-dev
 npm run dev
 ```
 
-### 5. Run locally (quick dev)
+### 5.  Apache Production Setup
+
+DocumentRoot must point to:
+
+```
+kabi-test/public
+```
+
+Enable rewrite:
 
 ```bash
-php -S localhost:8000 -t public
+sudo a2enmod rewrite
+sudo systemctl restart apache2
 ```
 
-Open:
+Virtual host example:
 
+```apache
+<VirtualHost *:80>
+    ServerName kabi-test.local
+    DocumentRoot /var/www/kabi-test/public
+
+    <Directory /var/www/kabi-test/public>
+        AllowOverride All
+        Require all granted
+    </Directory>
+</VirtualHost>
 ```
-http://localhost:8000
+
+Routing:
+
+```apache
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [QSA,L]
 ```
 
 ---
@@ -119,29 +169,6 @@ The product image gallery uses Swiper with synced thumbnails.
 
 ```bash
 npm install swiper
-```
-
-### JS module
-
-```js
-import Swiper from "swiper";
-import { Navigation, Thumbs, Keyboard } from "swiper/modules";
-import "swiper/css";
-```
-
-### Required SCSS (inside grid layouts)
-
-```scss
-.product-single__media,
-.product-gallery,
-.product-gallery__main {
-  min-width: 0;
-  max-width: 100%;
-}
-
-.product-gallery__main {
-  overflow: hidden;
-}
 ```
 
 ### Features
@@ -222,46 +249,6 @@ sudo apt install php-gd
 
 ```bash
 composer install
-```
-
----
-
-## Apache Production Setup
-
-DocumentRoot must point to:
-
-```
-kabi-test/public
-```
-
-Enable rewrite:
-
-```bash
-sudo a2enmod rewrite
-sudo systemctl restart apache2
-```
-
-Virtual host example:
-
-```apache
-<VirtualHost *:80>
-    ServerName kabi-test.local
-    DocumentRoot /var/www/kabi-test/public
-
-    <Directory /var/www/kabi-test/public>
-        AllowOverride All
-        Require all granted
-    </Directory>
-</VirtualHost>
-```
-
-Routing:
-
-```apache
-RewriteEngine On
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^ index.php [QSA,L]
 ```
 
 ---

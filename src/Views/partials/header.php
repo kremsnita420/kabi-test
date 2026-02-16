@@ -1,13 +1,21 @@
 <?php
+declare(strict_types=1);
+
+use App\Support\UrlGenerator;
+
+// Determine the current request path for active nav highlighting
 $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
 $isActive = static function (string $href) use ($path): string
 {
     return $path === $href ? ' is-active' : '';
 };
+
+// Instantiate URL generator to build localized route paths
+$url = new UrlGenerator();
 ?>
 
 <header class="site-header container" role="banner">
-    <a href="/" class="site-logo" aria-label="Homepage">
+    <a href="<?= $url->home() ?>" class="site-logo" aria-label="Homepage">
         <img
             src="/assets/images/logo.png"
             srcset="/assets/images/logo.png 1x, /assets/images/logo@2x.png 2x"
@@ -40,11 +48,11 @@ $isActive = static function (string $href) use ($path): string
                 </div>
 
                 <div class="nav-panel__links">
-                    <a class="nav-item<?= $isActive('/') ?>" href="/">Domov</a>
-                    <a class="nav-item<?= $isActive('/o-nas') ?>" href="/o-nas">O nas</a>
-                    <a class="nav-item<?= $isActive('/kontakt') ?>" href="/kontakt">Kontakt</a>
-                    <a class="nav-item<?= $isActive('/pisite-nam') ?>" href="/pisite-nam">Pišite nam</a>
-                    <a class="nav-item <?= $isActive('/izdelki') ?>" href="/izdelki">Izdelki</a>
+                    <a class="nav-item<?= $isActive($url->home()) ?>" href="<?= $url->home() ?>">Domov</a>
+                    <a class="nav-item<?= $isActive($url->about()) ?>" href="<?= $url->about() ?>">O nas</a>
+                    <a class="nav-item<?= $isActive($url->contact()) ?>" href="<?= $url->contact() ?>">Kontakt</a>
+                    <a class="nav-item<?= $isActive($url->writeUs()) ?>" href="<?= $url->writeUs() ?>">Pišite nam</a>
+                    <a class="nav-item <?= $isActive($url->products()) ?>" href="<?= $url->products() ?>">Izdelki</a>
                 </div>
             </div>
         </div>
