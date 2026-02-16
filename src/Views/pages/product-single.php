@@ -50,73 +50,43 @@ if ($mainWebpOk)
 
         <!-- LEFT: Gallery -->
         <div class="product-single__media">
-            <div class="product-gallery">
+            <div class="product-gallery" data-product-gallery>
 
-                <div class="product-gallery__main">
-                    <?php if ($mainJpg): ?>
-                        <?php $first = $galleryItems[0]['hero'] ?? []; ?>
+                <!-- Main slider -->
+                <div class="swiper product-gallery__main" data-gallery-main>
+                    <div class="swiper-wrapper">
 
-                        <?= Picture::render($first, [
-                            'id' => 'productMainImage',
-                            'alt' => $name,
-                            'loading' => 'eager',
-                            'decoding' => 'async',
-                            'fetchpriority' => 'high',
-                            'width' => 1200,
-                            'height' => 1200,
-                            'publicDir' => $publicDir,
-                        ]) ?>
-                    <?php else: ?>
-                        <div class="product-gallery__placeholder" aria-hidden="true"></div>
-                    <?php endif; ?>
+                        <?php foreach ($galleryItems as $i => $item): ?>
+                            <?php $hero = $item['hero'] ?? []; ?>
+
+                            <div class="swiper-slide">
+                                <?= Picture::render($hero, [
+                                    'alt' => $name,
+                                    'loading' => $i === 0 ? 'eager' : 'lazy',
+                                    'decoding' => 'async',
+                                    'fetchpriority' => $i === 0 ? 'high' : 'auto',
+                                    'width' => 1200,
+                                    'height' => 1200,
+                                    'publicDir' => $publicDir,
+                                ]) ?>
+                            </div>
+                        <?php endforeach; ?>
+
+                    </div>
+
+                    <!-- Optional navigation UI -->
+                    <div class="product-gallery__nav product-gallery__prev" data-gallery-prev aria-label="Previous"></div>
+                    <div class="product-gallery__nav product-gallery__next" data-gallery-next aria-label="Next"></div>
                 </div>
 
-                <?php if (!empty($galleryItems)): ?>
-                    <div class="product-gallery__thumbs" aria-label="Galerija">
-                        <?php foreach ($galleryItems as $i => $item): ?>
-                            <?php
-                            $hero  = $item['hero']  ?? [];
-                            $thumb = $item['thumb'] ?? [];
+                <!-- Thumbs slider -->
+                <div class="swiper product-gallery__thumbs" data-gallery-thumbs>
+                    <div class="swiper-wrapper">
 
-                            $heroJpg   = (string) ($hero['jpg']   ?? '');
-                            $heroJpg2  = (string) ($hero['jpg2']  ?? '');
-                            $heroWebp  = (string) ($hero['webp']  ?? '');
-                            $heroWebp2 = (string) ($hero['webp2'] ?? '');
+                        <?php foreach ($galleryItems as $item): ?>
+                            <?php $thumb = $item['thumb'] ?? []; ?>
 
-                            $thumbJpg   = (string) ($thumb['jpg']   ?? '');
-                            $thumbJpg2  = (string) ($thumb['jpg2']  ?? '');
-                            $thumbWebp  = (string) ($thumb['webp']  ?? '');
-                            $thumbWebp2 = (string) ($thumb['webp2'] ?? '');
-
-                            // Existence checks (avoid 404)
-                            $heroJpg2Ok  = $heroJpg2 !== '' && $exists($heroJpg2);
-                            $heroWebpOk  = $heroWebp !== '' && $exists($heroWebp);
-                            $heroWebp2Ok = $heroWebp2 !== '' && $exists($heroWebp2);
-
-                            $thumbJpg2Ok  = $thumbJpg2 !== '' && $exists($thumbJpg2);
-                            $thumbWebpOk  = $thumbWebp !== '' && $exists($thumbWebp);
-                            $thumbWebp2Ok = $thumbWebp2 !== '' && $exists($thumbWebp2);
-
-                            // Build safe srcsets
-                            $thumbWebpSrcset = '';
-                            if ($thumbWebpOk)
-                            {
-                                $thumbWebpSrcset = $thumbWebp2Ok
-                                    ? ($thumbWebp . ' 1x, ' . $thumbWebp2 . ' 2x')
-                                    : ($thumbWebp . ' 1x');
-                            }
-
-                            // If thumb files are missing for some reason, fall back to hero jpg
-                            $thumbFallback = $thumbJpg !== '' ? $thumbJpg : $heroJpg;
-                            ?>
-                            <button
-                                type="button"
-                                class="product-gallery__thumb<?= $i === 0 ? ' is-active' : '' ?>"
-                                data-hero-jpg="<?= $e($heroJpg) ?>"
-                                data-hero-jpg2="<?= $e($heroJpg2Ok ? $heroJpg2 : '') ?>"
-                                data-hero-webp="<?= $e($heroWebpOk ? $heroWebp : '') ?>"
-                                data-hero-webp2="<?= $e($heroWebp2Ok ? $heroWebp2 : '') ?>"
-                                aria-label="Prikaži sliko <?= (int) ($i + 1) ?>">
+                            <div class="swiper-slide product-gallery__thumb">
                                 <?= Picture::render($thumb, [
                                     'alt' => '',
                                     'loading' => 'lazy',
@@ -125,13 +95,14 @@ if ($mainWebpOk)
                                     'height' => 140,
                                     'publicDir' => $publicDir,
                                 ]) ?>
-
-                            </button>
+                            </div>
                         <?php endforeach; ?>
+
                     </div>
-                <?php endif; ?>
+                </div>
 
             </div>
+
         </div>
 
         <!-- RIGHT: Content -->

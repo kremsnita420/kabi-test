@@ -1,45 +1,104 @@
+// resources/js/modules/products.js
+
+import Swiper from "swiper";
+import { Navigation, Thumbs, Keyboard } from "swiper/modules";
+import "swiper/css";
+
 export function initProductGallery() {
-  const mainImg = document.getElementById("productMainImage");
-  if (!mainImg) return;
+  const root = document.querySelector("[data-product-gallery]");
+  if (!root) return;
 
-  const picture = mainImg.closest("picture");
-  const webpSource = picture ? picture.querySelector('source[type="image/webp"]') : null;
+  const mainEl = root.querySelector("[data-gallery-main]");
+  const thumbsEl = root.querySelector("[data-gallery-thumbs]");
+  if (!mainEl || !thumbsEl) return;
 
-  const thumbs = document.querySelectorAll(".product-gallery__thumb");
-  if (!thumbs.length) return;
+  const prevEl = root.querySelector("[data-gallery-prev]");
+  const nextEl = root.querySelector("[data-gallery-next]");
 
-  thumbs.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const heroJpg = btn.dataset.heroJpg;
-      if (!heroJpg) return;
+  // Thumbs slider
+  const thumbs = new Swiper(thumbsEl, {
+    modules: [Thumbs],
+    slidesPerView: "auto",
+    spaceBetween: 10,
+    watchSlidesProgress: true,
+    freeMode: true,
 
-      const heroJpg2 = btn.dataset.heroJpg2 || "";
-      const heroWebp = btn.dataset.heroWebp || "";
-      const heroWebp2 = btn.dataset.heroWebp2 || "";
-
-      // Update main <img>
-      mainImg.src = heroJpg;
-
-      if (heroJpg2) {
-        mainImg.srcset = `${heroJpg} 1x, ${heroJpg2} 2x`;
-      } else {
-        mainImg.removeAttribute("srcset");
-      }
-
-      // Update webp <source> if present
-      if (webpSource) {
-        if (heroWebp) {
-          const webp2 = heroWebp2 || heroWebp;
-          webpSource.srcset = `${heroWebp} 1x, ${webp2} 2x`;
-        } else {
-          // no webp for this image (fallback to jpg)
-          webpSource.removeAttribute("srcset");
-        }
-      }
-
-      // Active state
-      thumbs.forEach((b) => b.classList.remove("is-active"));
-      btn.classList.add("is-active");
-    });
+    // Helps Swiper when layout changes (grid, fonts, images)
+    watchOverflow: true,
+    observer: true,
+    observeParents: true,
+    resizeObserver: true,
   });
+
+  // Main slider
+  const main = new Swiper(mainEl, {
+    modules: [Navigation, Thumbs, Keyboard],
+    slidesPerView: 1,
+    spaceBetween: 0,
+
+    keyboard: { enabled: true },
+
+    thumbs: { swiper: thumbs },
+
+    navigation: {
+      prevEl,
+      nextEl,
+    },
+
+    // Helps Swiper when layout changes (grid, fonts, images)
+    watchOverflow: true,
+    observer: true,
+    observeParents: true,
+    resizeObserver: true,
+  });
+
+  // Mark ready (optional, for CSS hooks)
+  mainEl.classList.add("is-ready");
+  thumbsEl.classList.add("is-ready");
+
+  // ✅ Critical: force Swiper to recalc once layout is stable
+  // (fixes weird huge widths like 1.6e+07px)
+  const forceUpdate = () => {
+    try {
+      thumbs.update();
+      main.update();
+    } catch (e) {
+      // no-op
+    }
+  };
+
+  // First tick + after full load
+  requestAnimationFrame(forceUpdate);
+  window.addEventListener("load", forceUpdate, { once: true });
+
+  // Also update when all images inside the gallery finish loading
+  const imgs = root.querySelectorAll("img");
+  let pending = 0;
+
+  imgs.forEach((img) => {
+    if (!img.complete) {
+      pending++;
+      img.addEventListener(
+        "load",
+        () => {
+          pending--;
+          // wait a tick so DOM sizes apply
+          requestAnimationFrame(forceUpdate);
+        },
+        { once: true }
+      );
+      img.addEventListener(
+        "error",
+        () => {
+          pending--;
+          requestAnimationFrame(forceUpdate);
+        },
+        { once: true }
+      );
+    }
+  });
+
+  // Last resort: update after a short delay (fonts/layout shifts)
+  setTimeout(forceUpdate, 250);
+  setTimeout(forceUpdate, 800);
 }

@@ -1,6 +1,10 @@
 @use "abstracts/variables" as *;
 @use "abstracts/mixins" as *;
 
+/* ------------------------------------------------------------
+   Layout
+------------------------------------------------------------ */
+
 .product-single__grid {
   display: grid;
   grid-template-columns: 1fr 2fr;
@@ -8,46 +12,131 @@
   align-items: start;
 }
 
+/* ✅ Critical when Swiper lives in a CSS Grid child:
+   prevents weird overflow sizing and insane Swiper widths */
+.product-single__media,
+.product-gallery,
 .product-gallery__main {
-  border-radius: 0.5rem;
-  overflow: hidden;
+  min-width: 0;
+  max-width: 100%;
 }
 
-.product-gallery__main img {
-  width: 100%;
-  max-height: 30rem;
-  height: auto;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
-  display: block;
+/* ------------------------------------------------------------
+   Swiper Gallery
+------------------------------------------------------------ */
+
+.product-gallery {
+  .swiper {
+    width: 100%;
+  }
+
+  /* MAIN slider */
+  .product-gallery__main {
+    position: relative; /* nav anchors here */
+    overflow: hidden;   /* Swiper expects this */
+
+    .swiper-wrapper {
+      align-items: stretch;
+    }
+
+    .swiper-slide {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    picture,
+    img {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+    }
+  }
+
+  /* THUMBS slider */
+  .product-gallery__thumbs {
+    margin-top: 1rem;
+
+    .swiper-wrapper {
+      align-items: center;
+    }
+
+    .swiper-slide {
+      width: 10rem; // thumbs fixed width
+      height: 10rem;
+      opacity: 0.7;
+      cursor: pointer;
+      border-radius: 1rem;
+      overflow: hidden;
+      user-select: none;
+      -webkit-user-drag: none;
+      touch-action: pan-y;
+    }
+
+    .swiper-slide-thumb-active {
+      opacity: 1;
+      outline: 2px solid rgba(0, 0, 0, 0.25);
+      outline-offset: 2px;
+    }
+
+    picture,
+    img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  /* NAV buttons */
+  .product-gallery__nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    width: 4.5rem;
+    height: 4.5rem;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.35);
+    cursor: pointer;
+
+    display: grid;
+    place-items: center;
+
+    /* optional hover effect */
+    transition: background 0.15s ease;
+    &:hover {
+      background: rgba(0, 0, 0, 0.45);
+    }
+
+    &.swiper-button-disabled {
+      opacity: 0.35;
+      cursor: default;
+    }
+  }
+
+  .product-gallery__prev { left: 1rem; }
+  .product-gallery__next { right: 1rem; }
+
+  /* Simple chevrons (no icons needed) */
+  .product-gallery__prev::before,
+  .product-gallery__next::before {
+    content: "";
+    width: 10px;
+    height: 10px;
+    border-right: 2px solid rgba(255, 255, 255, 0.9);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.9);
+    display: block;
+  }
+
+  .product-gallery__prev::before { transform: rotate(135deg); }
+  .product-gallery__next::before { transform: rotate(-45deg); }
 }
 
-.product-gallery__thumbs {
-  display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
-}
-
-.product-gallery__thumb {
-  border: 0;
-  padding: 0;
-  background: transparent;
-  cursor: pointer;
-  border-radius: 0.5rem;
-  overflow: hidden;
-  outline: 2px solid transparent;
-}
-
-.product-gallery__thumb.is-active {
-  outline-color: rgba(90, 140, 255, 0.8);
-}
-
-.product-gallery__thumb img {
-  width: 7rem;
-  height: 7rem;
-  object-fit: cover;
-  display: block;
-}
+/* ------------------------------------------------------------
+   Content
+------------------------------------------------------------ */
 
 .product-single__title {
   font-size: $medium-heading;
@@ -58,22 +147,22 @@
 
 .product-single__subtitle {
   font-size: $small-heading;
-  margin: 6px 0 18px;
-  color: rgba(0,0,0,.55);
+  margin: 0.5rem 0 2rem;
+  color: rgba(0, 0, 0, 0.55);
 }
 
 .product-single__text p {
   font-size: $small-text;
-  margin: 0 0 14px;
-  color: rgba(0,0,0,.6);
+  margin: 0 0 1.5rem;
+  color: rgba(0, 0, 0, 0.6);
   line-height: 1.6;
 }
 
 .product-single__price {
   display: inline-block;
-  margin: 12px 0 18px;
+  margin: 1rem 0 2rem;
   font-weight: 800;
-  font-size: 18px;
+  font-size: $medium-text;
 }
 
 .btn.btn--outline {
@@ -81,14 +170,31 @@
   width: fit-content;
 }
 
-/* mobile */
+/* ------------------------------------------------------------
+   Mobile
+------------------------------------------------------------ */
+
 @include mobile {
   .product-single__grid {
     grid-template-columns: 1fr;
-    gap: 20px;
+    gap: $space;
   }
 
   .product-single__title {
-    font-size: 30px;
+    font-size: $large-heading;
+  }
+
+  .product-gallery {
+    .product-gallery__thumbs {
+      .swiper-slide {
+        width: 5rem;
+        height: 5rem;
+      }
+    }
+
+    .product-gallery__nav {
+      width: 3rem;
+      height: 3rem;
+    }
   }
 }

@@ -61,7 +61,7 @@ final class ProductRepository
         4 => [
             'id' => 4,
             "slug" => "powerbank",
-            'name' => 'Hitri polnilnik – prenosna baterija USB-C',
+            'name' => 'Prenosna baterija USB-C',
             'price' => 39.90,
             'category' => 'Dodatki za telefone',
             'short_description' => 'Napolnite naprave kjerkoli in kadarkoli.',
@@ -157,14 +157,26 @@ final class ProductRepository
         $product['image']   = $dirWeb . '/main.jpg'; // your old key; fine if missing
 
         // 3) Default “main” variants (hero-main/thumb-main) if they exist
+        // Prefer thumb-main if it exists, otherwise use thumb-{firstOriginal}
         $heroMainWeb  = $dirWeb . '/hero-main.jpg';
         $thumbMainWeb = $dirWeb . '/thumb-main.jpg';
 
+        // If thumb-main doesn't exist, fall back to the first discovered original (e.g. 1.jpg -> thumb-1.jpg)
+        $firstOriginalWeb = $originals[0] ?? '';
+        $firstName = $firstOriginalWeb !== '' ? (string) pathinfo($firstOriginalWeb, PATHINFO_FILENAME) : '';
+
+        $thumbFallbackWeb = $firstName !== '' ? $dirWeb . '/thumb-' . $firstName . '.jpg' : '';
+        $heroFallbackWeb  = $firstName !== '' ? $dirWeb . '/hero-' . $firstName . '.jpg' : '';
+
+        $heroPick  = is_file($publicDir . $heroMainWeb)  ? $heroMainWeb  : $heroFallbackWeb;
+        $listPick  = is_file($publicDir . $thumbMainWeb) ? $thumbMainWeb : $thumbFallbackWeb;
+
         $product['images'] = [
-            'hero'  => is_file($publicDir . $heroMainWeb) ? $this->variantSetFromPath($heroMainWeb) : [],
-            'list'  => is_file($publicDir . $thumbMainWeb) ? $this->variantSetFromPath($thumbMainWeb) : [],
-            'thumb' => is_file($publicDir . $thumbMainWeb) ? $this->variantSetFromPath($thumbMainWeb) : [],
+            'hero'  => ($heroPick !== '' && is_file($publicDir . $heroPick)) ? $this->variantSetFromPath($heroPick) : [],
+            'list'  => ($listPick !== '' && is_file($publicDir . $listPick)) ? $this->variantSetFromPath($listPick) : [],
+            'thumb' => ($listPick !== '' && is_file($publicDir . $listPick)) ? $this->variantSetFromPath($listPick) : [],
         ];
+
 
         // 4) Build per-image hero/thumb variants for product single
         $galleryItems = [];

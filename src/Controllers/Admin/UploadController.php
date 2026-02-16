@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controllers\Admin;
 
-// use App\Services\ImagePipeline;
-
 use App\Services\ImageService;
 
 final class UploadController
