@@ -7,9 +7,10 @@ body {
     flex-direction: column;
     justify-content: flex-start;
     background-color: $light-gray-color;
-      font-size: 1.6rem;
-  color: $primary-text-color;
+    font-size: 1.6rem;
+    color: $primary-text-color;
 }
+
 .container {
     max-width: 1141px;
     width: 100%;
@@ -24,5 +25,5 @@ body {
         margin-bottom: calc($space / 2);
 
     }
-   
+
 }
