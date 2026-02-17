@@ -8,6 +8,9 @@ It provides:
 - An admin image upload hub with automatic responsive image generation  
 - A Swiper-powered product gallery with thumbnails  
 - A minimal framework you can extend without heavy dependencies  
+- Full localization & translation system  
+- Dynamic multilingual routing  
+- Locale-aware price formatting 
 
 ---
 
@@ -19,6 +22,8 @@ It provides:
 - Intervention Image (image resizing & WebP generation)
 - Dynamic language-aware routes (SL / EN / DE / HR)
 - Centralized route definitions via UrlGenerator
+- Translation system (PHP dictionaries, no gettext)
+- Price formatting helper
 
 ### Frontend
 - Vanilla JavaScript ES modules
@@ -28,25 +33,85 @@ It provides:
 
 ---
 
+
 ## Dynamic Routing
 
 All routes are defined in:
 
 src/Support/UrlGenerator.php
 
+products:
+sl → izdelki  
+en → products  
+de → produkte  
+hr → proizvodi  
+
+Product pages:
+
+/izdelek/1  
+/en/product/1  
+/de/produkt/1  
+/hr/proizvod/1  
+
+---
+
+## Localization & Translations
+
+Translations live in:
+
+src/Translations/{lang}.php
+
 Example:
 
-products: sl → izdelki\
-en → products\
-de → produkte\
-hr → proizvodi
+```php
+return [
+  'nav.home' => 'Home',
+  'lang.currency' => '€',
+  'product.headphones.name' => 'Wireless headphones',
+];
+```
 
-Product pages automatically map to:
+---
 
-/izdelek/1\
-/en/product/1\
-/de/produkt/1\
-/hr/proizvod/1
+## Localized Product Content
+
+ProductRepository contains only neutral data:
+
+- slug  
+- price  
+- images  
+
+Text resolved dynamically via:
+
+product.{slug}.name  
+product.{slug}.short  
+product.{slug}.description  
+
+---
+
+## Price Formatting
+
+```php
+use App\Support\Price;
+
+<?= Price::format($product['price']) ?>
+```
+
+Currency from:
+
+lang.currency
+
+---
+
+## Language Switcher
+
+Dropdown selector in header:
+
+- Preserves current page  
+- Switches localized routes  
+- Uses translation flags  
+
+---
 
 ---
 
