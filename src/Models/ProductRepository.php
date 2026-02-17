@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Support\I18n;
+
 final class ProductRepository
 {
     private array $products = [
         1 => [
             'id' => 1,
-            "slug" => "headphones",
+            'slug' => 'headphones',
+            // These base values are now treated as fallbacks if translations are missing.
             'name' => 'Brezžične slušalke',
             'price' => 129.90,
             'category' => 'Avdio oprema',
@@ -26,7 +29,7 @@ final class ProductRepository
 
         2 => [
             'id' => 2,
-            "slug" => "watch",
+            'slug' => 'watch',
             'name' => 'Pametna športna ura',
             'price' => 89.50,
             'category' => 'Pametne naprave',
@@ -43,7 +46,7 @@ final class ProductRepository
 
         3 => [
             'id' => 3,
-            "slug" => "speaker",
+            'slug' => 'speaker',
             'name' => 'Prenosni Bluetooth zvočnik',
             'price' => 59.99,
             'category' => 'Avdio oprema',
@@ -60,7 +63,7 @@ final class ProductRepository
 
         4 => [
             'id' => 4,
-            "slug" => "powerbank",
+            'slug' => 'powerbank',
             'name' => 'Prenosna baterija USB-C',
             'price' => 39.90,
             'category' => 'Dodatki za telefone',
@@ -77,7 +80,7 @@ final class ProductRepository
 
         5 => [
             'id' => 5,
-            "slug" => "chair",
+            'slug' => 'chair',
             'name' => 'Ergonomski pisarniški stol',
             'price' => 189.00,
             'category' => 'Pisarniška oprema',
@@ -100,6 +103,7 @@ final class ProductRepository
         foreach ($items as &$p)
         {
             $p = $this->decorateImages($p);
+            $p = $this->localize($p);
         }
 
         return $items;
@@ -113,7 +117,65 @@ final class ProductRepository
             return null;
         }
 
-        return $this->decorateImages($p);
+        $p = $this->decorateImages($p);
+        $p = $this->localize($p);
+
+        return $p;
+    }
+
+    /**
+     * Localize human-visible strings via translations.
+     *
+     * Translation key base:
+     *   product.{slug}.name
+     *   product.{slug}.category
+     *   product.{slug}.short
+     *   product.{slug}.description
+     *
+     * Falls back to current product values if translation key is missing.
+     */
+    private function localize(array $product): array
+    {
+        $slug = (string) ($product['slug'] ?? '');
+        if ($slug === '')
+        {
+            return $product;
+        }
+
+        $base = 'product.' . $slug . '.';
+
+        // I18n::t() returns the key itself when missing (per current implementation)
+        $nameKey = $base . 'name';
+        $catKey  = $base . 'category';
+        $shortKey = $base . 'short';
+        $descKey = $base . 'description';
+
+        $tName  = I18n::t($nameKey);
+        $tCat   = I18n::t($catKey);
+        $tShort = I18n::t($shortKey);
+        $tDesc  = I18n::t($descKey);
+
+        if ($tName !== $nameKey)
+        {
+            $product['name'] = $tName;
+        }
+
+        if ($tCat !== $catKey)
+        {
+            $product['category'] = $tCat;
+        }
+
+        if ($tShort !== $shortKey)
+        {
+            $product['short_description'] = $tShort;
+        }
+
+        if ($tDesc !== $descKey)
+        {
+            $product['description'] = $tDesc;
+        }
+
+        return $product;
     }
 
     /**
@@ -133,7 +195,8 @@ final class ProductRepository
             return $product;
         }
 
-        $projectRoot = dirname(__DIR__, 2); // src/Models -> project root
+        // NOTE: src/Models -> project root
+        $projectRoot = dirname(__DIR__, 2);
         $publicDir   = $projectRoot . '/public';
 
         $dirWeb = '/assets/product-images/' . $slug;
@@ -154,14 +217,13 @@ final class ProductRepository
 
         // Keep backwards compatible keys:
         $product['gallery'] = $originals;
-        $product['image']   = $dirWeb . '/main.jpg'; // your old key; fine if missing
+        $product['image']   = $dirWeb . '/main.jpg'; // old key; fine if missing
 
         // 3) Default “main” variants (hero-main/thumb-main) if they exist
         // Prefer thumb-main if it exists, otherwise use thumb-{firstOriginal}
         $heroMainWeb  = $dirWeb . '/hero-main.jpg';
         $thumbMainWeb = $dirWeb . '/thumb-main.jpg';
 
-        // If thumb-main doesn't exist, fall back to the first discovered original (e.g. 1.jpg -> thumb-1.jpg)
         $firstOriginalWeb = $originals[0] ?? '';
         $firstName = $firstOriginalWeb !== '' ? (string) pathinfo($firstOriginalWeb, PATHINFO_FILENAME) : '';
 
@@ -177,13 +239,11 @@ final class ProductRepository
             'thumb' => ($listPick !== '' && is_file($publicDir . $listPick)) ? $this->variantSetFromPath($listPick) : [],
         ];
 
-
         // 4) Build per-image hero/thumb variants for product single
         $galleryItems = [];
 
         foreach ($originals as $imgWeb)
         {
-            // /assets/product-images/watch/5.jpg -> name=5
             $name = (string) pathinfo($imgWeb, PATHINFO_FILENAME);
 
             $heroBaseWeb  = $dirWeb . '/hero-' . $name . '.jpg';
@@ -232,21 +292,12 @@ final class ProductRepository
         return array_values($found);
     }
 
-
-
     /**
      * Creates a predictable variant set:
      *  - jpg:  original path (or png)
      *  - jpg2: @2x path (same extension)
      *  - webp: same filename but .webp
      *  - webp2:@2x .webp
-     *
-     * Example:
-     *  /assets/product-images/headphones/1.jpg
-     *  -> jpg   /assets/product-images/headphones/1.jpg
-     *  -> jpg2  /assets/product-images/headphones/1@2x.jpg
-     *  -> webp  /assets/product-images/headphones/1.webp
-     *  -> webp2 /assets/product-images/headphones/1@2x.webp
      */
     private function variantSetFromPath(string $path): array
     {
@@ -267,13 +318,11 @@ final class ProductRepository
         $webp  = $base . '.webp';
         $webp2 = $base . '@2x.webp';
 
-        // If original was png, keep jpg pointing to png
         if ($ext === 'png')
         {
             $jpg = $base . '.png';
         }
 
-        // If original is .jpeg, ensure jpg points to .jpg if you prefer (optional)
         if ($ext === 'jpeg')
         {
             $jpg = $base . '.jpg';

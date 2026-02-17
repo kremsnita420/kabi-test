@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 use App\Views\Helpers\Picture;
 use App\Support\UrlGenerator;
+use App\Support\I18n;
+use App\Support\I18nPrice;
 
 $e = static fn($v) => htmlspecialchars((string) $v, ENT_QUOTES, 'UTF-8');
 
@@ -79,8 +81,8 @@ if ($mainWebpOk)
                     </div>
 
                     <!-- Optional navigation UI -->
-                    <div class="product-gallery__nav product-gallery__prev" data-gallery-prev aria-label="Previous"></div>
-                    <div class="product-gallery__nav product-gallery__next" data-gallery-next aria-label="Next"></div>
+                    <div class="product-gallery__nav product-gallery__prev" data-gallery-prev aria-label="<?= I18n::et('gallery.prev') ?>"></div>
+                    <div class="product-gallery__nav product-gallery__next" data-gallery-next aria-label="<?= I18n::et('gallery.next') ?>"></div>
                 </div>
 
                 <!-- Thumbs slider -->
@@ -132,9 +134,12 @@ if ($mainWebpOk)
                 </div>
             <?php endif; ?>
 
+            <h5 class="product-single__price">
+                <?= I18nPrice::format($product['price']) ?>
+            </h5>
             <a class="btn btn--outline btn--back" href="<?= $url->products() ?>">
                 <i class="fa-solid fa-chevron-left"></i>
-                Nazaj na seznam
+                <?= I18n::et('products.back') ?>
             </a>
         </div>
 

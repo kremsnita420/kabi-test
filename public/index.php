@@ -32,8 +32,7 @@ spl_autoload_register(function (string $class): void
     // project is deployed the PHP classes may live in either `src/`
     // directly or nested under `src/src/`. Because this file lives in
     // `public/`, we resolve both possibilities relative to the project root.
-    $baseDir = dirname(__DIR__) . "/src/";
-
+    $baseDir = __DIR__ . '/../src/';
 
     $file = $baseDir . $relativePath;
     if (is_file($file))
@@ -48,10 +47,14 @@ use App\Controllers\PageController;
 use App\Controllers\ProductController;
 use App\Controllers\NotFoundController;
 use App\Support\UrlGenerator;
+use App\Support\I18n;
 
 // Instantiate router and URL generator
 $router = new Router();
 $urlGen = new UrlGenerator();
+
+// Boot translations for current request language
+I18n::boot($urlGen->lang());
 
 // Register localized routes for static pages
 foreach ($urlGen->paths('home') as $path)

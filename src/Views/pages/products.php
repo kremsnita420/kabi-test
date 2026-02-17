@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Support\I18n;
+
 // This view displays the list of products. It expects a `$products` array
 // containing product data as provided by the controller. The existing
 // partial `product-list.php` is reused to render the actual grid of cards.
@@ -14,7 +16,7 @@ $products = $products ?? [];
 ?>
 
 <div class="container">
-
+    <h1><?= I18n::et('products.title') ?></h1>
 
     <?php
     // Reuse the product-list partial to render the product grid

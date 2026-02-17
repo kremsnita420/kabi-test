@@ -1,6 +1,10 @@
+<?php
+declare(strict_types=1);
+
+use App\Support\I18n;
+?>
+
 <div class="container">
-    <h1>Začetna stran</h1>
-    <p>
-        Dobrodošli na Kabi Test! To je domača stran, kjer lahko najdete vse naše izdelke in informacije o nas.
-    </p>
+    <h1><?= I18n::et('home.title') ?></h1>
+    <p><?= I18n::et('home.lead') ?></p>
 </div>

@@ -40,8 +40,11 @@
       margin-bottom: 1.5rem;
     }
 
+    .card-price {
+      margin-bottom: 1rem;
+    }
+
     .card-footer{
-      margin-top: auto;
 
       .btn {
       @include base-btn();

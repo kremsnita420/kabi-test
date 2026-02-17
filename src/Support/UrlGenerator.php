@@ -8,6 +8,9 @@ final class UrlGenerator
 {
     private string $defaultLang = 'sl';
 
+    /** If set, overrides language auto-detected from URL. */
+    private ?string $forcedLang = null;
+
     /**
      * Supported languages.
      * Convention: default language has no "/sl" prefix; others use "/{lang}/...".
@@ -73,6 +76,24 @@ final class UrlGenerator
         return $this->build($this->resolve('home'));
     }
 
+    /**
+     * Return a cloned generator that builds URLs for a specific language.
+     */
+    public function forLang(string $lang): self
+    {
+        $clone = clone $this;
+        $clone->forcedLang = in_array($lang, $this->langs, true) ? $lang : $this->defaultLang;
+        return $clone;
+    }
+
+    /**
+     * Get the currently active language (forced or auto-detected).
+     */
+    public function lang(): string
+    {
+        return $this->forcedLang ?? $this->currentLang();
+    }
+
     public function about(): string
     {
         return $this->build($this->resolve('about'));
@@ -97,6 +118,78 @@ final class UrlGenerator
     {
         $prefix = $this->resolve('product_prefix');
         return $this->build($prefix . '/' . $id);
+    }
+
+    /**
+     * Build the equivalent URL in another language for the current request.
+     * Falls back to target home if it cannot map.
+     */
+    public function switchTo(string $targetLang, ?string $currentUri = null): string
+    {
+        $targetLang = in_array($targetLang, $this->langs, true) ? $targetLang : $this->defaultLang;
+
+        $uri  = $currentUri ?? ($_SERVER['REQUEST_URI'] ?? '/');
+        $path = parse_url($uri, PHP_URL_PATH) ?: '/';
+        $path = '/' . ltrim($path, '/');
+        $path = rtrim($path, '/');
+        if ($path === '')
+        {
+            $path = '/';
+        }
+
+        // Strip language prefix
+        $segments = array_values(array_filter(explode('/', trim($path, '/')), static fn($s) => $s !== ''));
+        if (!empty($segments) && in_array($segments[0], $this->langs, true) && $segments[0] !== $this->defaultLang)
+        {
+            array_shift($segments);
+        }
+
+        $rest = '/' . implode('/', $segments);
+        $rest = rtrim($rest, '/');
+        if ($rest === '')
+        {
+            $rest = '/';
+        }
+
+        // Home
+        if ($rest === '/' || $rest === '')
+        {
+            return $this->forLang($targetLang)->home();
+        }
+
+        // Product detail: match any known product prefix in any language
+        $prefixMap = $this->routes['product_prefix'] ?? [];
+        foreach ($prefixMap as $pfx)
+        {
+            $pfx = '/' . trim((string) $pfx, '/');
+            if (preg_match('#^' . preg_quote($pfx, '#') . '/(\d+)$#', $rest, $m))
+            {
+                return $this->forLang($targetLang)->product((int) $m[1]);
+            }
+        }
+
+        // Static pages
+        foreach (['about', 'contact', 'write_us', 'products'] as $key)
+        {
+            $map = $this->routes[$key] ?? [];
+            foreach ($map as $slug)
+            {
+                $slugPath = '/' . trim((string) $slug, '/');
+                if ($slugPath !== '/' && $rest === $slugPath)
+                {
+                    $gen = $this->forLang($targetLang);
+                    return match ($key) {
+                        'about' => $gen->about(),
+                        'contact' => $gen->contact(),
+                        'write_us' => $gen->writeUs(),
+                        'products' => $gen->products(),
+                        default => $gen->home(),
+                    };
+                }
+            }
+        }
+
+        return $this->forLang($targetLang)->home();
     }
 
     /* ==========================
@@ -162,7 +255,7 @@ final class UrlGenerator
 
     private function build(string $path): string
     {
-        $lang = $this->currentLang();
+        $lang = $this->lang();
 
         $langSegment = $lang !== $this->defaultLang
             ? $lang . '/'
@@ -175,7 +268,7 @@ final class UrlGenerator
 
     private function resolve(string $key): string
     {
-        $lang = $this->currentLang();
+        $lang = $this->lang();
 
         $map = $this->routes[$key] ?? [];
 

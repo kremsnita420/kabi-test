@@ -1,0 +1,17 @@
+.lang-switch {
+  display: flex;
+  align-items: center;
+}
+
+.lang-switch__select {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  background: #fff;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.lang-switch__select:focus {
+  outline: 2px solid #0077ff;
+}

@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 use App\Views\Helpers\Picture;
 use App\Support\UrlGenerator;
+use App\Support\I18n;
+use App\Support\I18nPrice;
+
 
 $e = static fn($v) => htmlspecialchars((string) $v, ENT_QUOTES, 'UTF-8');
 
@@ -16,7 +19,7 @@ $exists = static fn(string $p) => $p !== '' && is_file($publicDir . $p);
 $url = new UrlGenerator();
 ?>
 
-<div class="grid">
+<div class="grid container">
     <?php foreach ($products as $product): ?>
 
         <?php
@@ -62,13 +65,19 @@ $url = new UrlGenerator();
                 <h2 class="card-title"><?= $e($product['name']) ?></h2>
                 <h4 class="card-category"><?= $e($product['category']) ?></h4>
 
+
                 <p class="card-desc">
                     <?= $e($product['short_description']) ?>
+
+
                 </p>
 
+                <h5 class="card-price">
+                    <?= I18nPrice::format($product['price']) ?>
+                </h5>
                 <div class="card-footer">
                     <a class="btn" href="<?= $url->product((int)$product['id']) ?>">
-                        <i class="fa-solid fa-plus"></i> Več o izdelku
+                        <i class="fa-solid fa-plus"></i> <?= I18n::et('products.more') ?>
                     </a>
                 </div>
             </div>
