@@ -48,7 +48,7 @@ $builtMap = [
         <script type="module" src="http://localhost:5173/@vite/client"></script>
 
         <!-- Load CSS via Vite (either via JS import or this link) -->
-        <!-- <link rel="stylesheet" href="http://localhost:5173/resources/scss/style.scss"> -->
+        <link rel="stylesheet" href="http://localhost:5173/resources/scss/style.scss">
 
         <!-- Main app entry -->
         <script type="module" src="http://localhost:5173/resources/js/app.js"></script>
