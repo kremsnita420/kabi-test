@@ -61,25 +61,25 @@ return [
     // Watch
     'product.watch.name' => 'Intelligente Sportuhr',
     'product.watch.category' => 'Wearable Technology',
-    'product.watch.short' => 'Elegante Smartwatch mit Echtzeit-Herzfrequenzüberwachung, Schlaftracking, Schrittzähler und mehreren Sportmodi. Nahtlose Verbindung zu deinem Telefon für Benachrichtigungen und Musiksteuerung, ideal für einen gesunden Lebensstil.',
+    'product.watch.short' => 'Elegante Smartwatch mit Echtzeit-Herzfrequenzüberwachung, Schlaftracking, Schrittzähler und mehreren Sportmodi.',
     'product.watch.description' => 'Stilsichere Smartwatch mit Echtzeit-Herzfrequenzüberwachung, Schlaftracking, Schrittzähler und mehreren Sportmodi. Nahtlose Verbindung zu deinem Telefon für Benachrichtigungen und Musiksteuerung, was sie zum idealen Begleiter für einen gesunden Lebensstil macht.',
 
     // Speaker
     'product.speaker.name' => 'Tragbarer Bluetooth-Lautsprecher',
     'product.speaker.category' => 'Audioausrüstung',
-    'product.speaker.short' => 'Kompakter Bluetooth-Lautsprecher mit sattem Sound, tiefen Bässen und bis zu 12 Stunden Wiedergabezeit. Wasserdichtes Design ist perfekt für den Einsatz im Freien.',
+    'product.speaker.short' => 'Kompakter Bluetooth-Lautsprecher mit sattem Sound, tiefen Bässen und bis zu 12 Stunden Wiedergabezeit.',
     'product.speaker.description' => 'Kompakter Bluetooth-Lautsprecher mit sattem Sound und tiefen Bässen sowie bis zu 12 Stunden Wiedergabezeit. Sein wasserdichtes Design macht ihn perfekt für den Einsatz im Freien, egal ob am Strand, Pool oder beim Camping.',
 
     // Powerbank
     'product.powerbank.name' => 'Tragbare USB-C Powerbank',
     'product.powerbank.category' => 'Mobile Zubehör',
-    'product.powerbank.short' => 'Hochkapazitive tragbare Powerbank mit 20.000 mAh und Unterstützung für schnelles USB-C-Laden. Ermöglicht das mehrfache Aufladen von Telefonen, Tablets und anderen Geräten mit eingebautem Schutz.',
+    'product.powerbank.short' => 'Hochkapazitive tragbare Powerbank mit 20.000 mAh und Unterstützung für schnelles USB-C-Laden.',
     'product.powerbank.description' => 'Hochkapazitive tragbare Powerbank mit 20.000 mAh und Unterstützung für schnelles USB-C-Laden. Sie kann mehrere Geräte aufladen, einschließlich Telefone und Tablets, und verfügt über eingebauten Schutz vor Überladung, Überhitzung und Kurzschlüssen.',
 
     // Chair
     'product.chair.name' => 'Ergonomischer Bürostuhl',
     'product.chair.category' => 'Büromöbel',
-    'product.chair.short' => 'Qualitativ hochwertiger ergonomischer Stuhl mit Lendenstütze, verstellbaren Armlehnen, atmungsaktivem Netzrücken und höhenverstellbar. Entwickelt für eine bessere Haltung und weniger Rückenschmerzen.',
+    'product.chair.short' => 'Qualitativ hochwertiger ergonomischer Stuhl mit Lendenstütze, verstellbaren Armlehnen, atmungsaktivem Netzrücken und höhenverstellbar.',
     'product.chair.description' => 'Qualitativ hochwertiger ergonomischer Bürostuhl mit Lendenstütze, verstellbaren Armlehnen, atmungsaktivem Netzrücken und höhenverstellbar. Entwickelt, um eine bessere Haltung zu fördern und Rückenschmerzen während langer Arbeitsstunden zu reduzieren.',
 
 ];

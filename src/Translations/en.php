@@ -61,25 +61,25 @@ return [
     // Watch
     'product.watch.name' => 'Smart Fitness Watch',
     'product.watch.category' => 'Wearable Technology',
-    'product.watch.short' => 'Sleek smartwatch with real-time heart rate monitoring, sleep analysis, step counter, and multiple sport modes. Easy phone connectivity for notifications.',
+    'product.watch.short' => 'Sleek smartwatch with real-time heart rate monitoring, sleep analysis, step counter, and multiple sport modes.',
     'product.watch.description' => 'Stylish smartwatch featuring real-time heart rate monitoring, sleep tracking, step counting, and multiple sport modes. Seamlessly connects to your phone for notifications and music control, making it an ideal companion for a healthy lifestyle.',
 
     // Speaker
     'product.speaker.name' => 'Portable Bluetooth Speaker',
     'product.speaker.category' => 'Audio Equipment',
-    'product.speaker.short' => 'Compact Bluetooth speaker with rich sound, deep bass, and up to 12 hours of playtime. Waterproof design is perfect for outdoor use.',
+    'product.speaker.short' => 'Compact Bluetooth speaker with rich sound, deep bass, and up to 12 hours of playtime.',
     'product.speaker.description' => 'Compact Bluetooth speaker delivering rich sound and deep bass with up to 12 hours of playtime. Its waterproof design makes it perfect for outdoor use, whether you\'re at the beach, pool, or on a camping trip.',
 
     // Powerbank
     'product.powerbank.name' => 'Portable USB-C Power Bank',
     'product.powerbank.category' => 'Mobile Accessories',
-    'product.powerbank.short' => 'High-capacity portable power bank with 20,000 mAh and fast USB-C charging support. Allows multiple charges for phones, tablets, and other devices with built-in protection.',
+    'product.powerbank.short' => 'High-capacity portable power bank with 20,000 mAh and fast USB-C charging support.',
     'product.powerbank.description' => 'High-capacity portable power bank with 20,000 mAh and fast USB-C charging support. It can charge multiple devices, including phones and tablets, and features built-in protection against overcharging, overheating, and short circuits.',
 
     // Chair
     'product.chair.name' => 'Ergonomic Office Chair',
     'product.chair.category' => 'Office Furniture',
-    'product.chair.short' => 'Quality ergonomic chair with lumbar support, adjustable armrests, breathable mesh backrest, and adjustable height. Designed for better posture and less back pain.',
+    'product.chair.short' => 'Quality ergonomic chair with lumbar support, adjustable armrests, breathable mesh backrest, and adjustable height.',
     'product.chair.description' => 'Quality ergonomic office chair featuring lumbar support, adjustable armrests, breathable mesh backrest, and adjustable height. Designed to promote better posture and reduce back pain during long hours of work.',
 
 ];

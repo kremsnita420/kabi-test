@@ -34,7 +34,6 @@ $langs = ['sl', 'en', 'de', 'hr'];
         <!-- Language switcher -->
         <?php require __DIR__ . '/language-switcher.php'; ?>
 
-
         <button
             class="nav-toggle"
             type="button"
