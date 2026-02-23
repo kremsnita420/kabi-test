@@ -20,8 +20,7 @@ pnpm-debug.log*
 # Build output (optional)
 # If you want to keep compiled assets committed, remove these two lines
 # =========================
-# public/assets/css/
-# public/assets/js/
+public/build/
 
 # =========================
 # Environment / secrets
