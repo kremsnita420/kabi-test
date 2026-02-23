@@ -61,7 +61,6 @@ final class ProductController extends Controller
             'title'   => $name . ' – Kabi Test',
             'head'    => '<meta name="description" content="Podrobnosti izdelka: ' . $this->e((string) $name) . '">',
             'preloadImage' => $preloadImage,
-            'pageScripts' => ['resources/js/pages/product-single.js'],
         ]);
     }
 }
