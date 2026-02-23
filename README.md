@@ -5,7 +5,7 @@ Kabi Test is a lightweight PHP project demonstrating a clean custom MVC architec
 It provides:
 
 - A product listing and product detail pages  
-- An admin image upload hub with automatic responsive image generation  
+- An admin image upload hub with automatic responsive image generation. Just visit /admin/upload-hub
 - A Swiper-powered product gallery with thumbnails  
 - A minimal framework you can extend without heavy dependencies  
 - Full localization & translation system  

@@ -28,9 +28,8 @@ final class UploadHubController extends Controller
             'title' => 'Admin Upload – Kabi Test',
             'head'  => '<meta name="robots" content="noindex">',
             'products' => $options,
-            'pageScripts' => [
-                'resources/js/pages/admin-upload-hub.js',
-            ],
+            'bodyClass' => 'page-admin-upload-hub',
+
         ]);
     }
 }
