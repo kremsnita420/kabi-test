@@ -6,7 +6,7 @@ $e = static fn($v) => htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
 $products = $products ?? [];
 ?>
 
-<section class="admin-upload">
+<section class="admin-upload container">
     <div class="admin-upload__header">
         <h1>Upload slik</h1>
         <p>Najprej izberi izdelek, nato naloži sliko. Sistem samodejno ustvari <strong>hero</strong>, <strong>thumb</strong>, <strong>@2x</strong> in <strong>WebP</strong>.</p>
