@@ -64,7 +64,7 @@ $builtMap = [
     <?php endif; ?>
 </head>
 
-<body>
+<body class="<?= htmlspecialchars((string) $bodyClass, ENT_QUOTES, 'UTF-8') ?>">
 
     <?php require __DIR__ . '/partials/header.php'; ?>
 
