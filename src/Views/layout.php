@@ -76,12 +76,12 @@ $builtMap = [
 
     <?php if (!$viteDev): ?>
         <!-- Main built JS -->
-        <script src="/build/js/app.js"></script>
+        <script type="module" src="/build/js/app.js"></script>
 
         <!-- Optional per-page built JS -->
         <?php foreach ($pageScripts as $entry): ?>
             <?php if (isset($builtMap[$entry])): ?>
-                <script src="<?= htmlspecialchars((string) $builtMap[$entry], ENT_QUOTES, 'UTF-8') ?>"></script>
+                <script type="module" src="<?= htmlspecialchars((string) $builtMap[$entry], ENT_QUOTES, 'UTF-8') ?>"></script>
             <?php endif; ?>
         <?php endforeach; ?>
     <?php endif; ?>
